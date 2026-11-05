@@ -1,0 +1,20 @@
+/* اسم مزخرف بالإنجليزية: Osama / ‹ CINEMA › */
+.brand .brand-name.bn-en{font-family:'Cinzel Decorative','Cinzel','Playfair Display','Palatino Linotype',Georgia,'Times New Roman',serif!important;font-weight:900;font-size:27px!important;letter-spacing:1.5px;line-height:1.05;direction:ltr;text-align:left;
+  background:linear-gradient(100deg,#7a4a05 0%,#c98a12 28%,#f3c24f 50%,#b8731a 78%,#7a4a05 100%);-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(255,255,255,.55)) drop-shadow(0 3px 8px rgba(184,115,26,.35));padding-bottom:0;display:block}
+html.dark .brand .brand-name.bn-en{background:linear-gradient(100deg,#ffe9a8 0%,#f5b942 45%,#ffd77a 70%,#e8a23a 100%);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 2px 10px rgba(245,185,66,.35))}
+.brand .brand-name.bn-en::after{content:none!important;display:none!important}
+.brand .brand-tag.bt-en{display:flex!important;align-items:center;gap:7px;direction:ltr;margin-top:3px;font-family:'Cormorant Garamond','Cinzel',Georgia,serif;font-weight:700;font-size:11.5px!important;letter-spacing:.62em;color:#9a6a1c!important;text-transform:uppercase;opacity:1}
+html.dark .brand .brand-tag.bt-en{color:#f0c46a!important}
+.bt-en i{flex:1;height:1px;min-width:10px;background:linear-gradient(90deg,transparent,currentColor);position:relative}
+.bt-en i:last-child{background:linear-gradient(270deg,transparent,currentColor)}
+.bt-en i::after{content:"";position:absolute;top:-2px;width:5px;height:5px;background:currentColor;transform:rotate(45deg)}
+.bt-en i:first-child::after{inset-inline-end:0}.bt-en i:last-child::after{inset-inline-start:0}
+.bt-en span{padding-inline-start:.62em}
+.brand-compact .brand-name.bn-en{font-family:'Cinzel Decorative','Cinzel','Playfair Display',Georgia,serif!important;font-weight:900;font-size:19px!important;letter-spacing:1px;direction:ltr;
+  background:linear-gradient(100deg,#7a4a05,#d9a21b 45%,#8a5a00);-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent;white-space:nowrap}
+html.dark .brand-compact .brand-name.bn-en{background:linear-gradient(100deg,#ffe9a8,#f5b942 60%,#ffd77a);-webkit-background-clip:text;background-clip:text}
+.brand-compact .bn-en em{font-style:normal;font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:.62em;letter-spacing:.3em;text-transform:uppercase}
+.brand-icon.has-logo2{width:54px!important;height:54px!important;filter:drop-shadow(0 6px 14px rgba(160,60,110,.45))}
+.brand-compact .brand-icon.has-logo2{width:38px!important;height:38px!important}
+.brand{gap:12px}

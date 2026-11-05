@@ -1,0 +1,16 @@
+.ab-card{max-width:560px}
+.ab-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.ab-head h3{margin:0}.ab-head small{opacity:.6;letter-spacing:.2em}
+.ab-av{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:800;color:#fff;background:linear-gradient(135deg,#f5b942,#a1275f)}
+.ab-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.ab-tabs button{border:1px solid rgba(127,127,127,.3);background:transparent;color:inherit;border-radius:999px;padding:7px 14px;font:inherit;cursor:pointer}
+.ab-tabs button.on{background:var(--accent,#3478f6);border-color:transparent;color:#fff}
+.ab-body{max-height:min(58vh,480px);overflow:auto;line-height:1.85;padding-inline-end:4px}
+.ab-body h4{margin:0 0 8px}.ab-body p{margin:0 0 10px}
+.ab-contact{margin-top:14px;padding:14px;border-radius:18px;background:rgba(127,127,127,.1)}
+.ab-contact h4{margin:0 0 4px}.ab-hint{opacity:.7;font-size:13px;margin:0 0 12px!important}
+.ab-icons{display:flex;gap:14px;flex-wrap:wrap}
+.ab-ic{display:flex;flex-direction:column;align-items:center;gap:6px;color:inherit;text-decoration:none;font-size:12px;width:72px}
+.ab-ic span{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,.28);transition:transform .15s}
+.ab-ic:hover span,.ab-ic:focus-visible span{transform:translateY(-3px) scale(1.06)}
+.ab-ic:active span{transform:scale(.95)}

@@ -1,0 +1,27 @@
+/* لوحة الإدارة: فاتح/داكن + زجاج سائل بلا ضباب + تخطيط أوسع (v14) */
+:root{--glass:rgba(255,255,255,.78);--adm-bg:#e9eff7;--adm-side:rgba(248,250,254,.94);--adm-input:rgba(255,255,255,.75);--adm-panel2:rgba(52,120,246,.06)}
+html.adm-dark{color-scheme:dark;--glass:rgba(26,34,50,.86);--line:rgba(255,255,255,.12);--text:#e8eef6;--muted:#9fb0c4;--shadow:0 18px 50px rgba(0,0,0,.45);--adm-bg:#0e1520;--adm-side:rgba(18,26,40,.96);--adm-input:rgba(255,255,255,.07);--adm-panel2:rgba(111,168,255,.1)}
+html.adm-dark,html.adm-dark body{background:var(--adm-bg);color:var(--text)}
+html.adm-dark .auth-page{background:radial-gradient(circle at 15% 10%,rgba(67,130,250,.22),transparent 34%),radial-gradient(circle at 90% 90%,rgba(155,105,246,.18),transparent 32%),#0e1520}
+.admin-sidebar{background:var(--adm-side)!important;border:0;border-left:1px solid var(--line)}
+.glass-admin,.panel,.stat-card,.admin-movie,.auth-card,.admin-topbar{background:linear-gradient(135deg,var(--glass),color-mix(in srgb,var(--glass) 70%,transparent) 60%,var(--glass))!important;border:1px solid var(--line);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),var(--shadow)}
+html.adm-dark .glass-admin,html.adm-dark .panel,html.adm-dark .stat-card,html.adm-dark .admin-movie,html.adm-dark .auth-card,html.adm-dark .admin-topbar{box-shadow:inset 0 1px 0 rgba(255,255,255,.16),var(--shadow)}
+input,textarea,select,.form-grid input,.form-grid textarea,.form-grid select,.mini-form input,.mini-form select{background:var(--adm-input)!important;color:var(--text)!important;border-color:var(--line)!important}
+html.adm-dark option{background:#18212f;color:#e8eef6}
+.admin-nav button{color:var(--text)}html.adm-dark .admin-nav button:hover,html.adm-dark .admin-nav button.active{background:rgba(111,168,255,.16)}
+html.adm-dark .secondary-admin,html.adm-dark .icon-btn{background:rgba(255,255,255,.08);color:var(--text);border-color:var(--line)}
+html.adm-dark table,html.adm-dark th,html.adm-dark td{color:var(--text);border-color:var(--line)}
+html.adm-dark .empty-inline,html.adm-dark .hint,html.adm-dark small{color:var(--muted)}
+html.adm-dark .rank,html.adm-dark .paid-toggle span{background:var(--adm-panel2)}
+/* تخطيط أوسع */
+.admin-content{max-width:none!important;width:100%;padding-inline:clamp(14px,2.4vw,40px)!important}
+.panel-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))!important}
+.stat-grid{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))!important}
+#adm-theme{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:var(--adm-input);color:var(--text);cursor:pointer;flex:none}
+#adm-theme svg{width:20px;height:20px}
+.adm-fixed-theme{position:fixed;top:14px;left:14px;z-index:50}
+
+/* v17.4 — إخفاء الأقسام غير المختارة (يظهر قسم واحد فقط، والقائمة الجانبية تنقلك إليه) */
+.admin-section.hidden,.admin-main .hidden{display:none!important}
+.admin-section{animation:adm-in .22s ease both}
+@keyframes adm-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}

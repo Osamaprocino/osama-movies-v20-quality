@@ -1,0 +1,10 @@
+node_modules/
+admin.json
+data/*.json
+uploads/*
+!uploads/.gitkeep
+data/private/
+
+data/subtitles/
+data/translate-cache.json
+backups/

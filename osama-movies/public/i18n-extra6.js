@@ -1,0 +1,42 @@
+/* نصوص الإصدار 14 بثلاث لغات [عربي، English، Русский] */
+(function(){
+const K={
+'cust.nav':['تخصيص قناتي','Customize my channel','Настроить канал'],
+'cust.btn':['تخصيص القناة','Customize channel','Настроить канал'],
+'cust.title':['تخصيص القناة','Customize channel','Настройка канала'],
+'cust.name':['اسم القناة','Channel name','Название канала'],
+'cust.handle':['رابط القناة','Channel link','Ссылка канала'],
+'cust.handleHint':['3–24 حرفاً: أحرف إنجليزية صغيرة وأرقام و _ . اتركه فارغاً لاستعمال اسم المستخدم.','3–24 chars: lowercase letters, digits and _. Leave empty to use your username.','3–24 символа: строчные латинские буквы, цифры и _. Пусто — имя пользователя.'],
+'cust.bio':['نبذة عن القناة','About the channel','О канале'],
+'cust.avatar':['تغيير الصورة','Change picture','Сменить фото'],
+'cust.banner':['تغيير البانر','Change banner','Сменить баннер'],
+'cust.save':['حفظ','Save','Сохранить'],
+'cust.saved':['تم الحفظ','Saved','Сохранено'],
+'cust.copy':['نسخ','Copy','Копировать'],
+'cust.copied':['تم نسخ الرابط','Link copied','Ссылка скопирована'],
+'live.nav':['بث مباشر','Live','Прямой эфир'],
+'live.title':['البث المباشر','Live streams','Прямые эфиры'],
+'live.badge':['مباشر','LIVE','LIVE'],
+'live.now':['بث مباشر الآن','Live now','Сейчас в эфире'],
+'live.none':['لا يوجد بث مباشر حالياً','No live stream right now','Сейчас нет прямых эфиров'],
+'live.watch':['شاهد الآن','Watch now','Смотреть'],
+'live.viewers':['{n} يشاهدون الآن','{n} watching now','Смотрят: {n}'],
+'live.ended':['انتهى البث','The stream has ended','Эфир завершён'],
+'live.unsupported':['متصفحك لا يدعم المشاهدة المباشرة. جرّب Chrome أو Edge أو Firefox.','Your browser cannot play this live stream. Try Chrome, Edge or Firefox.','Ваш браузер не поддерживает этот эфир. Попробуйте Chrome, Edge или Firefox.'],
+'live.goBtn':['ابدأ بثاً مباشراً','Go live','Начать эфир'],
+'live.goTitle':['ابدأ بثك المباشر','Start your live stream','Начать прямой эфир'],
+'live.goSub':['سيظهر بثك للزوار باسم قناتك ويصل مشتركيك إشعار.','Your stream appears under your channel and your subscribers are notified.','Эфир появится на вашем канале, подписчики получат уведомление.'],
+'live.fTitle':['عنوان البث','Stream title','Название эфира'],'live.fSrc':['المصدر','Source','Источник'],
+'live.srcCam':['الكاميرا + الميكروفون','Camera + microphone','Камера + микрофон'],'live.srcScreen':['الشاشة','Screen','Экран'],
+'live.rules':['أبقِ هذه الصفحة مفتوحة أثناء البث. أنت مسؤول عن المحتوى، وللإدارة إنهاء أي بث مخالف.','Keep this page open while live. You are responsible for your content; admins may end any stream.','Не закрывайте страницу во время эфира. Вы отвечаете за контент; администрация может завершить любой эфир.'],
+'live.start':['بدء البث','Start','Начать'],'live.stop':['إنهاء البث','End stream','Завершить эфир'],
+'live.started':['بدأ بثك الآن','You are live','Вы в эфире'],'live.stopped':['انتهى بثك','Your stream ended','Эфир завершён'],
+'live.already':['أنت تبث حالياً','You are already live','Вы уже в эфире'],
+'live.noBrowser':['متصفحك لا يدعم البث. استعمل Chrome أو Edge أو Firefox.','Your browser cannot broadcast. Use Chrome, Edge or Firefox.','Ваш браузер не поддерживает трансляцию. Chrome, Edge или Firefox.'],
+'live.noAccess':['تعذّر الوصول للكاميرا أو الشاشة. اسمح بالإذن من المتصفح.','Could not access camera or screen. Allow permission in your browser.','Нет доступа к камере или экрану. Разрешите доступ в браузере.'],
+'live.full':['البث ممتلئ حالياً، حاول بعد قليل.','This stream is full right now. Try again shortly.','Эфир переполнен. Попробуйте позже.'],
+'notif.channel_live':['{name} يبث مباشرة: {title}','{name} is live: {title}','{name} в эфире: {title}'],
+'notif.site_live':['بث مباشر الآن: {title}','Live now: {title}','Сейчас в эфире: {title}']
+};
+for(const [k,v] of Object.entries(K)){I18N.dict.ar[k]=v[0];I18N.dict.en[k]=v[1];I18N.dict.ru[k]=v[2]}
+})();

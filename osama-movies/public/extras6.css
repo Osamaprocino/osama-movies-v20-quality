@@ -1,0 +1,23 @@
+/* الإصدار 14 */
+.ch-banner{height:clamp(110px,22vw,230px);border-radius:26px;background:linear-gradient(135deg,#3478f6,#8b5cf6) center/cover no-repeat;margin-bottom:10px;border:1px solid var(--lg-rim,rgba(255,255,255,.7));box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6)}
+.ch-bio{margin:6px 0;color:var(--muted);font-size:13.5px;line-height:1.8;max-width:60ch}
+.ch-handle{color:var(--muted);display:block;font-size:12px}
+.chan-site img,.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.cust-banner{position:relative;height:130px;border-radius:20px;background:linear-gradient(135deg,#3478f6,#8b5cf6) center/cover no-repeat;margin:10px 0;overflow:hidden}
+.cust-actions{position:absolute;inset:auto 8px 8px auto;display:flex;gap:6px}.cust-actions .ghost-btn{background:rgba(0,0,0,.5);color:#fff;border-radius:999px;padding:7px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;font-size:12px}
+.cust-ava{display:flex;align-items:center;gap:14px;margin:4px 0 12px}.cust-ava .avatar-xl{width:76px;height:76px;font-size:30px}.cust-ava label{cursor:pointer}
+.cust-link{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.cust-link code{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:9px 12px;border-radius:12px;border:1px solid var(--line);font-size:12px}
+/* بث مباشر */
+.live-dot{width:9px;height:9px;border-radius:50%;background:#ff2d55;margin-inline-start:auto;box-shadow:0 0 0 0 rgba(255,45,85,.6);animation:livepulse 1.6s infinite}.live-dot.hidden{display:none}
+@keyframes livepulse{70%{box-shadow:0 0 0 9px rgba(255,45,85,0)}100%{box-shadow:0 0 0 0 rgba(255,45,85,0)}}
+.live-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#ff2d55;color:#fff;font-weight:800;font-size:11px;letter-spacing:.5px}
+.live-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;animation:livepulse 1.4s infinite}
+.live-banner{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 16px;padding:12px 16px;border-radius:20px;border:1px solid rgba(255,45,85,.45);background:linear-gradient(135deg,rgba(255,45,85,.18),rgba(255,45,85,.06));color:var(--text);text-align:start;cursor:pointer}
+.live-banner b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.live-banner small{color:var(--muted)}.live-go{font-weight:800;color:#ff2d55}
+.live-card{width:min(100%,900px)!important}.live-stage{position:relative;border-radius:20px;overflow:hidden;background:#000;aspect-ratio:16/9}.live-stage video{width:100%;height:100%;display:block;background:#000}
+.live-corner{position:absolute;top:12px;inset-inline-start:12px}.live-msg{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:700;background:rgba(0,0,0,.5);text-align:center;padding:20px}.live-msg.hidden{display:none}
+.live-title{margin:12px 0 2px}.live-item{width:100%;text-align:start;cursor:pointer;background:transparent;color:var(--text)}
+
+.onair{position:fixed;z-index:400;inset-inline-end:16px;bottom:16px;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:20px;max-width:calc(100vw - 32px)}
+.onair video{width:96px;height:54px;border-radius:12px;object-fit:cover;background:#000;flex:none}.oa-info{display:grid;gap:3px;min-width:0}.oa-info b{font-variant-numeric:tabular-nums}.oa-info small{color:var(--muted)}.oa-stop{background:#ff2d55!important;color:#fff!important}
+.live-owner{margin:4px 0}

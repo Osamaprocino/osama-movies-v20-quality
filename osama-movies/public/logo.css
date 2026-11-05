@@ -1,0 +1,17 @@
+/* الشعار + اسم مزخرف */
+.brand-icon.has-logo{background:none!important;box-shadow:none!important;width:46px;height:46px;border-radius:0;padding:0;display:grid;place-items:center;filter:drop-shadow(0 6px 14px rgba(99,102,241,.45))}
+.brand-compact .brand-icon.has-logo{width:38px;height:38px}
+.osama-logo{width:100%;height:100%;display:block}
+.brand-name{font-family:'Aref Ruqaa','Reem Kufi','Noto Naskh Arabic','Amiri','Traditional Arabic',serif!important;font-weight:700;font-size:25px!important;line-height:1.15;letter-spacing:.2px;
+  background:linear-gradient(100deg,#1d4ed8 0%,#7c3aed 48%,#db2777 100%);-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent;
+  text-shadow:none;display:inline-block;padding-bottom:2px}
+.brand-compact .brand-name{font-size:21px!important}
+html.dark .brand-name{background:linear-gradient(100deg,#ffe9a8 0%,#ffb86b 50%,#ff7eb6 100%);-webkit-background-clip:text;background-clip:text}
+.brand .brand-name::after{content:"";display:block;height:6px;margin-top:2px;background:
+  radial-gradient(circle at 50% 50%,#f5b942 0 2.2px,transparent 2.6px) center/6px 6px no-repeat,
+  linear-gradient(90deg,transparent,#f5b942 30%,#f5b942 70%,transparent) center/100% 1.4px no-repeat;opacity:.95;-webkit-text-fill-color:initial}
+.brand .brand-tag{letter-spacing:.6px;opacity:.75}
+.brand{gap:12px}
+@media(max-width:650px){.brand-compact .brand-name{font-size:19px!important}.brand-compact .brand-icon.has-logo{width:34px;height:34px}}
+.brand-icon.has-logo>svg.osama-logo{width:100%!important;height:100%!important;max-width:none}
+.brand-compact .brand-name{white-space:nowrap}@media(max-width:650px){.brand-compact .brand-name{font-size:17px!important}}

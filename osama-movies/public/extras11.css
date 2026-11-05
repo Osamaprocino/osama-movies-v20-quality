@@ -1,0 +1,65 @@
+/* v19 — حركات وتأثيرات (تحترم خيار «الحركة» في المظهر وإعداد النظام prefers-reduced-motion) */
+#fx-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:3000;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,var(--accent,#3478f6),#8b5cf6,#ec4899,#f5b942);box-shadow:0 0 12px rgba(139,92,246,.7);pointer-events:none}
+html[dir=rtl] #fx-progress{transform-origin:right}
+#fx-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.7}
+/* ظهور تدريجي عند التمرير */
+.fx-pre{opacity:0;transform:translateY(24px) scale(.96)}
+.fx-in{opacity:1;transform:none;transition:opacity .65s cubic-bezier(.2,.7,.2,1) var(--d,0s),transform .65s cubic-bezier(.2,.7,.2,1) var(--d,0s)}
+/* بطاقات الأفلام: ميل ثلاثي الأبعاد + لمعة تتبع المؤشر + تكبير الملصق */
+.movie-card{position:relative;transform-style:preserve-3d;will-change:transform}
+.movie-card.fx-tilt{transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-5px) scale(1.02);box-shadow:0 22px 44px rgba(20,24,60,.32);transition:transform .08s linear,box-shadow .2s}
+.movie-card:not(.fx-tilt){transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.movie-card .poster img{transition:transform .7s cubic-bezier(.2,.8,.2,1),filter .4s}
+.movie-card:hover .poster img{transform:scale(1.09)}
+.movie-card .poster::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.34),transparent 55%)}
+.movie-card:hover .poster::after{opacity:1}
+.movie-card .play-chip{transition:transform .35s cubic-bezier(.3,1.6,.4,1),opacity .3s;transform:scale(.7);opacity:.0}
+.movie-card:hover .play-chip,.movie-card:focus-within .play-chip{transform:scale(1);opacity:1}
+@media(hover:none){.movie-card .play-chip{transform:none;opacity:1}}
+/* أزرار */
+.primary-btn,.secondary-btn,.ghost-btn,.filter-row button{position:relative;overflow:hidden;transition:transform .18s cubic-bezier(.3,1.5,.4,1),box-shadow .25s,filter .25s}
+.primary-btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(52,120,246,.42);filter:saturate(1.15)}
+.primary-btn:active,.secondary-btn:active,.ghost-btn:active{transform:scale(.96)}
+.fx-rip{position:absolute;border-radius:50%;pointer-events:none;background:rgba(255,255,255,.5);transform:scale(0);animation:fx-rip .65s ease-out forwards}
+@keyframes fx-rip{to{transform:scale(1);opacity:0}}
+/* البطل (Hero) */
+.hero{position:relative}
+.fx-glow{position:absolute;inset:0;pointer-events:none;border-radius:inherit;opacity:0;transition:opacity .4s;background:radial-gradient(520px circle at var(--hx,50%) var(--hy,50%),rgba(255,255,255,.28),rgba(139,92,246,.12) 40%,transparent 70%)}
+.hero:hover .fx-glow{opacity:1}
+.hero-poster{transition:transform .2s ease-out;transform:translate3d(var(--px,0),var(--py,0),0) rotate(var(--pr,0deg))}
+.hero-poster img{animation:fx-kb 18s ease-in-out infinite alternate}
+@keyframes fx-kb{from{transform:scale(1)}to{transform:scale(1.08) translate(-1.5%,-1%)}}
+.hero h1{background-size:200% 100%}
+/* الشعار */
+.brand .brand-name.bn-en,.brand-compact .brand-name.bn-en{background-size:220% 100%!important;animation:fx-shine 5.5s linear infinite}
+@keyframes fx-shine{from{background-position:120% 0}to{background-position:-120% 0}}
+.osama-logo2{animation:fx-float 4.5s ease-in-out infinite;transform-origin:50% 50%}
+@keyframes fx-float{50%{transform:translateY(-2px) rotate(3deg)}}
+.brand:hover .osama-logo2{animation:fx-spin 1.1s cubic-bezier(.3,1.2,.4,1)}
+@keyframes fx-spin{to{transform:rotate(360deg) scale(1.08)}}
+/* انتقال بين الصفحات */
+.fx-view-in{animation:fx-viewin .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes fx-viewin{from{opacity:0;transform:translateY(16px) scale(.99)}to{opacity:1;transform:none}}
+/* النوافذ */
+#ex-modal .pub-card,#ex-modal>*:not(.ex-backdrop){animation:fx-pop .42s cubic-bezier(.2,1.25,.3,1) both}
+@keyframes fx-pop{from{opacity:0;transform:translateY(18px) scale(.92)}to{opacity:1;transform:none}}
+/* انفجار صغير عند الإعجاب/الحفظ */
+.fx-burst{position:fixed;z-index:3500;pointer-events:none;font-size:16px;animation:fx-burst .8s ease-out forwards}
+@keyframes fx-burst{from{opacity:1;transform:translate(0,0) scale(.6)}to{opacity:0;transform:translate(var(--bx),var(--by)) scale(1.4) rotate(var(--br))}}
+.fx-popbtn{animation:fx-btnpop .5s cubic-bezier(.3,1.8,.4,1)}
+@keyframes fx-btnpop{40%{transform:scale(1.35)}100%{transform:scale(1)}}
+/* زر العودة للأعلى */
+#fx-top{position:fixed;inset-inline-start:16px;bottom:84px;z-index:880;width:46px;height:46px;border-radius:50%;border:0;color:#fff;cursor:pointer;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent,#3478f6),#8b5cf6);box-shadow:0 8px 22px rgba(0,0,0,.35);opacity:0;transform:translateY(20px) scale(.7);pointer-events:none;transition:opacity .3s,transform .4s cubic-bezier(.3,1.6,.4,1)}
+#fx-top.on{opacity:1;transform:none;pointer-events:auto}
+#fx-top:hover{transform:translateY(-3px) scale(1.08)}
+/* مؤشرات التحميل: لمعة بدل الفراغ */
+.fx-skel{position:relative;overflow:hidden;background:rgba(127,127,127,.14)!important}
+.fx-skel::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:fx-skel 1.3s infinite}
+@keyframes fx-skel{to{transform:translateX(100%)}}
+.poster:not(.fx-loaded){background:linear-gradient(110deg,rgba(127,127,127,.12) 30%,rgba(255,255,255,.35) 50%,rgba(127,127,127,.12) 70%);background-size:220% 100%;animation:fx-skelbg 1.4s linear infinite}
+@keyframes fx-skelbg{to{background-position:-120% 0}}
+.poster.fx-loaded{animation:none}
+/* إيقاف كامل عند تفضيل تقليل الحركة */
+@media(prefers-reduced-motion:reduce){#fx-canvas,#fx-progress,.fx-glow{display:none!important}.fx-pre{opacity:1!important;transform:none!important}*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}}
+html.no-motion #fx-canvas,html.no-motion #fx-progress,html.no-motion .fx-glow{display:none!important}
+html.no-motion .fx-pre{opacity:1!important;transform:none!important}

@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eef3fb">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="سينما أسامة">
+<script>try{if(localStorage.getItem("osama_theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
+<script src="/i18n.js"></script>
+<script src="/i18n-extra.js"></script>
+<script src="/i18n-extra2.js"></script>
+<script src="/i18n-extra3.js"></script>
+<script src="/i18n-extra4.js"></script>
+<script src="/i18n-extra5.js"></script>
+<script src="/i18n-extra6.js"></script>
+<script src="/i18n-extra7.js"></script>
+<title>سينما أسامة</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/glass.css">
+<link rel="stylesheet" href="/extras.css">
+<link rel="stylesheet" href="/extras2.css">
+<link rel="stylesheet" href="/youtube.css">
+<link rel="stylesheet" href="/extras3.css">
+<link rel="stylesheet" href="/extras4.css">
+<link rel="stylesheet" href="/extras5.css">
+<link rel="stylesheet" href="/extras6.css">
+<link rel="stylesheet" href="/extras7.css">
+<link rel="stylesheet" href="/extras8.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&display=swap">
+<link rel="icon" type="image/svg+xml" href="/logo2.svg">
+<link rel="stylesheet" href="/extras9.css">
+<link rel="stylesheet" href="/extras10.css">
+<link rel="stylesheet" href="/extras11.css">
+<link rel="stylesheet" href="/logo.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:wght@600;700&display=swap"><link rel="stylesheet" href="/logo2.css">
+<link rel="stylesheet" href="/liquid.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="lg-refract" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="2" seed="7" result="noise"/>
+      <feGaussianBlur in="noise" stdDeviation="2.2" result="soft"/>
+      <feDisplacementMap in="SourceGraphic" in2="soft" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+<div class="bg-orb orb-a"></div><div class="bg-orb orb-b"></div>
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+<aside class="sidebar" id="app-sidebar">
+  <div class="side-top">
+    <div class="brand">
+      <div class="brand-icon"><i data-lucide="film"></i></div>
+      <div><strong data-i18n="brand.name">سينما أسامة</strong><small data-i18n="brand.tag">مكتبة أفلام</small></div>
+      <button class="icon-btn side-close" id="side-close" data-i18n-aria="common.close" aria-label="إغلاق"><i data-lucide="x"></i></button>
+    </div>
+
+    <button class="side-user lg hidden" id="side-user" type="button" data-tab="profile">
+      <span class="avatar avatar-lg" id="side-avatar"></span>
+      <span class="su-text"><strong id="side-name"></strong><small id="side-email" dir="ltr"></small></span>
+    </button>
+
+    <div class="side-section-title" data-i18n="nav.browse">التصفح</div>
+    <nav class="side-nav">
+      <button data-tab="home" class="active"><i data-lucide="house"></i><span data-i18n="nav.home">الرئيسية</span></button>
+      <button data-tab="shorts"><i data-lucide="zap"></i><span data-i18n="nav.shorts">Shorts</span></button>
+      <button data-tab="saved"><i data-lucide="bookmark"></i><span data-i18n="nav.saved">المحفوظات</span></button>
+      <button data-tab="history"><i data-lucide="history"></i><span data-i18n="nav.history">سجل المشاهدة</span></button>
+      <button data-tab="profile" id="nav-profile" class="hidden"><i data-lucide="user-round"></i><span data-i18n="nav.profile">ملفي الشخصي</span></button>
+    </nav>
+    <div class="side-section-title" data-i18n="nav.library">المكتبة</div>
+    <div class="side-categories" id="side-categories"></div>
+  </div>
+  <div class="side-footer">
+    <div class="lang-switch" id="lang-switch" role="group" data-i18n-aria="lang.label" aria-label="اللغة">
+      <button type="button" data-lang="ar">العربية</button>
+      <button type="button" data-lang="en">English</button>
+      <button type="button" data-lang="ru">Русский</button>
+    </div>
+    <button id="auth-btn"><i data-lucide="log-in"></i><span data-i18n="nav.login">تسجيل الدخول</span></button>
+    <a href="/admin"><i data-lucide="layout-dashboard"></i><span data-i18n="nav.admin">لوحة الإدارة</span></a>
+    <button id="theme-btn"><i data-lucide="moon"></i><span data-i18n="nav.dark">الوضع الداكن</span></button>
+  </div>
+</aside>
+
+<div class="app-shell">
+  <header class="topbar">
+    <button class="icon-btn" id="menu-open" data-i18n-aria="nav.menu" aria-label="القائمة"><i data-lucide="menu"></i></button>
+    <a class="brand-compact" href="/"><span class="brand-icon"><i data-lucide="film"></i></span><strong data-i18n="brand.name">سينما أسامة</strong></a>
+    <div class="top-actions">
+      <div class="lang-pop">
+        <button class="icon-btn" id="lang-open" data-i18n-aria="lang.label" aria-label="اللغة" aria-haspopup="true"><i data-lucide="languages"></i></button>
+        <div class="lang-menu glass hidden" id="lang-menu" role="menu">
+          <button type="button" data-lang="ar" role="menuitem">العربية</button>
+          <button type="button" data-lang="en" role="menuitem">English</button>
+          <button type="button" data-lang="ru" role="menuitem">Русский</button>
+        </div>
+      </div>
+      <button class="icon-btn" id="search-open" data-i18n-aria="nav.search" aria-label="بحث"><i data-lucide="search"></i></button>
+      <a class="icon-btn desktop-admin" href="/admin" data-i18n-aria="nav.admin" aria-label="الإدارة"><i data-lucide="layout-dashboard"></i></a>
+    </div>
+  </header>
+
+  <div class="search-panel hidden" id="search-panel">
+    <div class="search-box"><i data-lucide="search"></i><input id="search-input" data-i18n-ph="search.placeholder" placeholder="ابحث عن فيلم، وصف، أو تصنيف"><button id="search-clear" data-i18n-aria="common.clear" aria-label="مسح"><i data-lucide="x"></i></button></div>
+    <div class="filter-row" id="category-filters"></div>
+  </div>
+
+  <main class="content">
+    <section class="view active" id="home-view">
+      <div class="hero glass">
+        <div class="hero-copy">
+          <span class="eyebrow"><i data-lucide="sparkles"></i> <span data-i18n="home.eyebrow">مكتبتك في مكان واحد</span></span>
+          <h1 id="hero-title" data-i18n="home.heroTitle">اكتشف الأفلام المنشورة</h1>
+          <p id="hero-desc" data-i18n="home.heroDesc">تصفح المكتبة وشغّل الفيلم مباشرة من هاتفك.</p>
+          <div class="hero-actions">
+            <button class="primary-btn" id="hero-play"><i data-lucide="play"></i><span data-i18n="common.play">تشغيل</span></button>
+            <button class="secondary-btn" id="hero-save"><i data-lucide="bookmark"></i><span data-i18n="common.save">حفظ</span></button>
+          </div>
+        </div>
+        <div class="hero-poster" id="hero-poster"><i data-lucide="film"></i></div>
+      </div>
+
+      <div class="section-head"><div><h2 data-i18n="home.libraryTitle">مكتبة الأفلام</h2><p data-i18n="home.librarySub">كل المحتوى المضاف من لوحة الإدارة</p></div><span class="count-pill" id="movies-count">0</span></div>
+      <div class="stats-strip">
+        <div class="mini-stat"><i data-lucide="clapperboard"></i><div><strong id="mini-movies">0</strong><span data-i18n="home.statMovies">فيلم</span></div></div>
+        <div class="mini-stat"><i data-lucide="eye"></i><div><strong id="mini-views">0</strong><span data-i18n="home.statViews">مشاهدة</span></div></div>
+        <div class="mini-stat"><i data-lucide="bookmark"></i><div><strong id="mini-saved">0</strong><span data-i18n="home.statSaved">محفوظ</span></div></div>
+      </div>
+      <div id="empty-home" class="empty glass hidden"><i data-lucide="film"></i><h3 data-i18n="home.emptyTitle">لا توجد أفلام بعد</h3><p data-i18n="home.emptyDesc">أضف أول فيلم من لوحة الإدارة.</p></div>
+      <div class="movie-grid" id="movie-grid"></div>
+    </section>
+
+    <section class="view hidden" id="saved-view">
+      <div class="section-head"><div><h2 data-i18n="saved.title">المحفوظات</h2><p data-i18n="saved.sub">أفلامك المفضلة على هذا الجهاز</p></div><span class="count-pill" id="saved-count">0</span></div>
+      <div class="movie-grid" id="saved-grid"></div>
+      <div id="empty-saved" class="empty glass"><i data-lucide="bookmark"></i><h3 data-i18n="saved.emptyTitle">لا توجد أفلام محفوظة</h3><p data-i18n="saved.emptyDesc">استخدم زر الحفظ من صفحة الفيلم.</p></div>
+    </section>
+
+    <section class="view hidden" id="history-view">
+      <div class="section-head"><div><h2 data-i18n="history.title">سجل المشاهدة</h2><p data-i18n="history.sub">آخر الأفلام التي فتحتها</p></div><button class="ghost-btn" id="clear-history" data-i18n="history.clear">مسح السجل</button></div>
+      <div class="movie-grid" id="history-grid"></div>
+      <div id="empty-history" class="empty glass"><i data-lucide="history"></i><h3 data-i18n="history.emptyTitle">السجل فارغ</h3><p data-i18n="history.emptyDesc">عند تشغيل فيلم سيظهر هنا.</p></div>
+    </section>
+
+    <!-- ===== Shorts ===== -->
+    <section class="view hidden" id="shorts-view">
+      <div class="shorts-wrap" id="shorts-wrap">
+        <div class="shorts-feed" id="shorts-feed" tabindex="0"></div>
+        <div class="shorts-empty hidden" id="shorts-empty">
+          <div class="se-icon lg"><i data-lucide="zap"></i></div>
+          <h3 data-i18n="shorts.emptyTitle">لا توجد مقاطع بعد</h3>
+          <p data-i18n="shorts.emptyDesc">كن أول من ينشر مقطعاً قصيراً.</p>
+          <button class="primary-btn" id="shorts-empty-upload" type="button"><i data-lucide="plus"></i><span data-i18n="shorts.upload">نشر مقطع</span></button>
+        </div>
+        <button class="shorts-fab lg" id="shorts-upload" type="button" data-i18n-aria="shorts.upload" aria-label="نشر مقطع"><i data-lucide="plus"></i></button>
+        <div class="shorts-arrows">
+          <button class="lg" id="shorts-prev" type="button" data-i18n-aria="shorts.prev" aria-label="السابق"><i data-lucide="chevron-up"></i></button>
+          <button class="lg" id="shorts-next" type="button" data-i18n-aria="shorts.next" aria-label="التالي"><i data-lucide="chevron-down"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== الملف الشخصي ===== -->
+    <section class="view hidden" id="profile-view">
+      <div class="section-head"><div><h2 data-i18n="profile.title">ملفي الشخصي</h2><p data-i18n="profile.sub">إدارة صورتك واسمك وكلمة المرور</p></div></div>
+      <div class="profile-grid">
+        <div class="glass profile-card">
+          <div class="profile-photo">
+            <button class="avatar avatar-xl photo-btn" id="profile-avatar" type="button" data-i18n-aria="profile.changePhoto" aria-label="تغيير الصورة"></button>
+            <div class="photo-actions">
+              <button class="secondary-btn" id="avatar-change" type="button"><i data-lucide="camera"></i><span data-i18n="profile.changePhoto">تغيير الصورة</span></button>
+              <button class="ghost-btn" id="avatar-remove" type="button"><i data-lucide="trash-2"></i><span data-i18n="profile.removePhoto">حذف الصورة</span></button>
+            </div>
+            <input type="file" id="avatar-input" accept="image/jpeg,image/png,image/webp" class="hidden">
+          </div>
+          <form id="profile-form" class="auth-form" autocomplete="off">
+            <label><span data-i18n="profile.name">الاسم</span><input id="pf-name" maxlength="40" minlength="2" required></label>
+            <label><span data-i18n="profile.email">البريد الإلكتروني</span><input id="pf-email" type="email" dir="ltr" readonly></label>
+            <label><span data-i18n="profile.age">العمر</span><input id="pf-age" type="number" inputmode="numeric" min="5" max="120" step="1"></label>
+            <button class="primary-btn" type="submit" id="pf-save"><i data-lucide="check"></i><span data-i18n="common.saveChanges">حفظ التغييرات</span></button>
+            <div class="auth-error" id="pf-msg"></div>
+          </form>
+        </div>
+        <div class="glass profile-card">
+          <h3 class="card-h"><i data-lucide="key-round"></i><span data-i18n="profile.passwordTitle">تغيير كلمة المرور</span></h3>
+          <form id="pass-form" class="auth-form" autocomplete="off">
+            <label><span data-i18n="profile.currentPassword">كلمة المرور الحالية</span><span class="pass-wrap"><input id="pw-current" type="password" autocomplete="current-password" required><button type="button" class="eye" data-eye="pw-current" data-i18n-aria="common.showHide" aria-label="Show"><i data-lucide="eye"></i></button></span></label>
+            <label><span data-i18n="profile.newPassword">كلمة المرور الجديدة</span><span class="pass-wrap"><input id="pw-new" type="password" autocomplete="new-password" minlength="10" maxlength="128" required><button type="button" class="eye" data-eye="pw-new" data-i18n-aria="common.showHide" aria-label="Show"><i data-lucide="eye"></i></button></span></label>
+            <div class="strength"><div class="strength-bar"><i id="pw-strength-fill"></i></div><small id="pw-strength-text"></small></div>
+            <label><span data-i18n="auth.confirmPassword">تأكيد كلمة المرور</span><input id="pw-new2" type="password" autocomplete="new-password" required></label>
+            <button class="primary-btn" type="submit" id="pw-save"><i data-lucide="shield-check"></i><span data-i18n="profile.updatePassword">تحديث كلمة المرور</span></button>
+            <div class="auth-error" id="pw-msg"></div>
+          </form>
+          <button class="ghost-btn danger-ghost" id="profile-logout" type="button"><i data-lucide="log-out"></i><span data-i18n="nav.logoutShort">تسجيل الخروج</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== صفحة المشاهدة ===== -->
+    <section class="view hidden" id="player-view">
+      <button class="back-btn" id="player-back"><i data-lucide="arrow-right" class="flip-rtl"></i><span data-i18n="common.back">العودة</span></button>
+      <div class="player lg-stage" id="player">
+        <div class="pl" id="pl">
+          <video id="video" playsinline preload="metadata"></video>
+          <div class="pl-caption" id="pl-caption" aria-live="off"></div>
+          <div class="pl-spinner hidden" id="pl-spinner"></div>
+          <div class="pl-tap pl-tap-back" id="pl-tap-back"><span><i data-lucide="rotate-ccw"></i><b>10</b></span></div>
+          <div class="pl-tap pl-tap-fwd" id="pl-tap-fwd"><span><i data-lucide="rotate-cw"></i><b>10</b></span></div>
+          <button class="pl-big lg" id="pl-big" type="button" data-i18n-aria="player.play" aria-label="تشغيل"><i data-lucide="play"></i></button>
+          <div class="pl-toast lg hidden" id="pl-toast"></div>
+          <div class="pl-ui" id="pl-ui">
+            <div class="pl-menu lg hidden" id="pl-menu-speed" role="menu"></div>
+            <div class="pl-menu lg pl-menu-cc hidden" id="pl-menu-cc" role="menu"></div>
+            <div class="pl-bar lg">
+              <div class="pl-seek" id="pl-seek" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-i18n-aria="player.seek" aria-label="التقدم">
+                <div class="pl-rail"><div class="pl-buf" id="pl-buf"></div><div class="pl-fill" id="pl-fill"></div></div>
+                <div class="pl-knob" id="pl-knob"></div>
+                <div class="pl-tip hidden" id="pl-tip" dir="ltr">0:00</div>
+              </div>
+              <div class="pl-row">
+                <div class="pl-grp">
+                  <button class="pl-btn" id="pl-play" type="button" data-i18n-aria="player.play" aria-label="تشغيل"><i data-lucide="play"></i></button>
+                  <button class="pl-btn pl-skip" id="pl-back10" type="button" data-i18n-aria="player.back10" aria-label="رجوع 10 ثوان"><i data-lucide="rotate-ccw"></i><b>10</b></button>
+                  <button class="pl-btn pl-skip" id="pl-fwd10" type="button" data-i18n-aria="player.fwd10" aria-label="تقديم 10 ثوان"><i data-lucide="rotate-cw"></i><b>10</b></button>
+                  <div class="pl-vol"><button class="pl-btn" id="pl-mute" type="button" data-i18n-aria="player.mute" aria-label="كتم"><i data-lucide="volume-2"></i></button><input type="range" id="pl-volume" min="0" max="1" step="0.02" value="1" data-i18n-aria="player.volume" aria-label="الصوت"></div>
+                  <span class="pl-time" id="pl-time" dir="ltr">0:00 / 0:00</span>
+                </div>
+                <div class="pl-grp">
+                  <button class="pl-btn pl-txt" id="pl-speed-btn" type="button" data-i18n-aria="player.speed" aria-label="سرعة التشغيل">1×</button>
+                  <button class="pl-btn" id="pl-cc-btn" type="button" data-i18n-aria="player.captions" aria-label="الترجمة"><i data-lucide="captions"></i></button>
+                  <button class="pl-btn pl-hide-sm" id="pl-pip" type="button" data-i18n-aria="player.pip" aria-label="نافذة عائمة"><i data-lucide="picture-in-picture-2"></i></button>
+                  <button class="pl-btn" id="pl-dl" type="button" data-i18n-aria="player.download" aria-label="تحميل"><i data-lucide="download"></i></button>
+                  <button class="pl-btn" id="pl-fs" type="button" data-i18n-aria="player.fullscreen" aria-label="ملء الشاشة"><i data-lucide="maximize"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <input type="file" id="pl-sub-file" accept=".srt,.vtt,text/vtt,application/x-subrip,text/plain" class="hidden">
+
+      <div class="paywall glass hidden" id="paywall">
+        <div class="pw-icon"><i data-lucide="lock"></i></div>
+        <h3 data-i18n="pay.title">هذا الفيلم مدفوع</h3>
+        <p class="pw-price" id="pw-price"></p>
+        <ol class="pw-steps">
+          <li data-i18n="pay.step1">حوّل المبلغ إلى حساب شام كاش التالي:</li>
+        </ol>
+        <div class="pw-account"><code id="pw-account"></code><button class="ghost-btn" id="pw-copy" type="button"><i data-lucide="copy"></i><span data-i18n="common.copy">نسخ</span></button></div>
+        <ol class="pw-steps" start="2">
+          <li data-i18n="pay.step2">بعد الدفع انسخ رقم الإيصال الظاهر في شام كاش (أرقام فقط).</li>
+          <li data-i18n="pay.step3">اكتبه هنا واضغط «تحقق».</li>
+        </ol>
+        <div id="pw-guest" class="pw-guest hidden"><p data-i18n="pay.guest">يجب تسجيل الدخول أو إنشاء حساب لإتمام الشراء.</p><button class="primary-btn" id="pw-login" type="button"><i data-lucide="log-in"></i><span data-i18n="pay.guestBtn">تسجيل الدخول / إنشاء حساب</span></button></div>
+        <form id="pw-form" class="pw-form hidden" autocomplete="off">
+          <input id="pw-receipt" inputmode="numeric" pattern="[0-9]*" maxlength="20" data-i18n-ph="pay.receipt" placeholder="رقم الإيصال" data-i18n-aria="pay.receipt" aria-label="رقم الإيصال" required>
+          <button class="primary-btn" id="pw-verify" type="submit"><i data-lucide="shield-check"></i><span data-i18n="pay.verify">تحقق</span></button>
+        </form>
+        <div class="pw-status" id="pw-status"></div>
+      </div>
+
+      <div class="movie-detail glass">
+        <div class="detail-title-row"><div><h2 id="detail-title"></h2><div class="meta" id="detail-meta"></div></div></div>
+        <div class="actions" id="movie-actions">
+          <div class="act-group lg">
+            <button class="act-btn" id="act-like" type="button" data-i18n-aria="act.like" aria-label="إعجاب"><i data-lucide="thumbs-up"></i><span id="act-like-n">0</span></button>
+            <button class="act-btn" id="act-dislike" type="button" data-i18n-aria="act.dislike" aria-label="عدم إعجاب"><i data-lucide="thumbs-down"></i><span id="act-dislike-n">0</span></button>
+          </div>
+          <button class="act-btn lg" id="act-share" type="button"><i data-lucide="share-2"></i><span data-i18n="act.share">مشاركة</span><em id="act-share-n"></em></button>
+          <button class="act-btn lg" id="act-download" type="button"><i data-lucide="download"></i><span data-i18n="act.download">تحميل</span></button>
+          <button class="act-btn lg" id="detail-save" type="button" data-i18n-aria="common.save" aria-label="حفظ"><i data-lucide="bookmark"></i><span data-i18n="common.save">حفظ</span></button>
+        </div>
+        <p id="detail-description"></p>
+      </div>
+
+      <section class="comments glass" id="movie-comments"></section>
+
+      <div class="section-head"><div><h3 data-i18n="player.related">قد يعجبك أيضاً</h3><p data-i18n="player.relatedSub">اقتراحات من نفس المكتبة</p></div></div>
+      <div class="movie-grid" id="related-grid"></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="active" data-tab="home"><i data-lucide="house"></i><span data-i18n="nav.home">الرئيسية</span></button>
+    <button data-tab="shorts"><i data-lucide="zap"></i><span data-i18n="nav.shorts">Shorts</span></button>
+    <button data-tab="saved"><i data-lucide="bookmark"></i><span data-i18n="nav.saved">المحفوظات</span></button>
+    <button data-tab="history"><i data-lucide="history"></i><span data-i18n="nav.historyShort">السجل</span></button>
+    <a href="/admin"><i data-lucide="layout-dashboard"></i><span data-i18n="nav.adminShort">الإدارة</span></a>
+  </nav>
+</div>
+
+<!-- نافذة تسجيل الدخول / إنشاء الحساب -->
+<div class="modal hidden" id="auth-modal" role="dialog" aria-modal="true">
+  <div class="modal-card glass">
+    <button class="icon-btn modal-close" id="auth-close" type="button" data-i18n-aria="common.close" aria-label="إغلاق"><i data-lucide="x"></i></button>
+    <div class="auth-tabs"><button type="button" class="active" data-auth-tab="login" data-i18n="auth.loginTab">تسجيل الدخول</button><button type="button" data-auth-tab="register" data-i18n="auth.registerTab">إنشاء حساب</button></div>
+    <form id="login-form" class="auth-form" autocomplete="on">
+      <label><span data-i18n="auth.userOrEmail">اسم المستخدم أو البريد</span><input id="login-username" autocomplete="username" required></label>
+      <label><span data-i18n="auth.password">كلمة المرور</span><span class="pass-wrap"><input id="login-password" type="password" autocomplete="current-password" required><button type="button" class="eye" data-eye="login-password" data-i18n-aria="common.showHide" aria-label="Show"><i data-lucide="eye"></i></button></span></label>
+      <button class="primary-btn" type="submit" id="login-submit"><i data-lucide="log-in"></i><span data-i18n="auth.loginBtn">دخول</span></button>
+      <div class="auth-error" id="login-error"></div>
+    </form>
+    <form id="register-form" class="auth-form hidden" autocomplete="on">
+      <label><span data-i18n="auth.username">اسم المستخدم</span><input id="reg-username" autocomplete="username" minlength="3" maxlength="24" required></label>
+      <label><span data-i18n="auth.email">البريد الإلكتروني</span><input id="reg-email" type="email" dir="ltr" autocomplete="email" maxlength="254" required></label>
+      <label><span data-i18n="auth.password">كلمة المرور</span><span class="pass-wrap"><input id="reg-password" type="password" autocomplete="new-password" minlength="10" maxlength="128" required><button type="button" class="eye" data-eye="reg-password" data-i18n-aria="common.showHide" aria-label="Show"><i data-lucide="eye"></i></button></span></label>
+      <div class="strength"><div class="strength-bar"><i id="strength-fill"></i></div><small id="strength-text"></small></div>
+      <label><span data-i18n="auth.confirmPassword">تأكيد كلمة المرور</span><input id="reg-password2" type="password" autocomplete="new-password" required></label>
+      <button class="primary-btn" type="submit" id="register-submit"><i data-lucide="user-plus"></i><span data-i18n="auth.registerBtn">إنشاء الحساب</span></button>
+      <div class="auth-error" id="register-error"></div>
+    </form>
+  </div>
+</div>
+
+<!-- نافذة المشاركة -->
+<div class="modal hidden" id="share-modal" role="dialog" aria-modal="true">
+  <div class="modal-card glass share-card">
+    <button class="icon-btn modal-close" id="share-close" type="button" data-i18n-aria="common.close" aria-label="إغلاق"><i data-lucide="x"></i></button>
+    <h3 class="card-h"><i data-lucide="share-2"></i><span data-i18n="share.title">مشاركة</span></h3>
+    <p class="share-name" id="share-name"></p>
+    <div class="share-link"><input id="share-url" readonly dir="ltr"><button class="primary-btn" id="share-copy" type="button"><i data-lucide="copy"></i><span data-i18n="common.copy">نسخ</span></button></div>
+    <div class="share-targets" id="share-targets"></div>
+    <button class="secondary-btn share-native hidden" id="share-native" type="button"><i data-lucide="share"></i><span data-i18n="share.more">المزيد من التطبيقات…</span></button>
+  </div>
+</div>
+
+<!-- نافذة نشر مقطع Short -->
+<div class="modal hidden" id="short-modal" role="dialog" aria-modal="true">
+  <div class="modal-card glass short-up">
+    <button class="icon-btn modal-close" id="short-close" type="button" data-i18n-aria="common.close" aria-label="إغلاق"><i data-lucide="x"></i></button>
+    <h3 class="card-h"><i data-lucide="zap"></i><span data-i18n="shorts.uploadTitle">نشر مقطع قصير</span></h3>
+    <form id="short-form" class="auth-form">
+      <label class="drop" id="short-drop"><i data-lucide="upload-cloud"></i><span data-i18n="shorts.choose">اختر فيديو (MP4 أو WebM حتى 3 دقائق)</span><input id="short-file" type="file" accept="video/mp4,video/webm,video/quicktime" class="hidden"></label>
+      <div class="short-preview hidden" id="short-preview"><video id="short-preview-video" muted playsinline controls></video></div>
+      <label><span data-i18n="shorts.caption">الوصف</span><textarea id="short-caption" maxlength="200" rows="3" data-i18n-ph="shorts.captionPh" placeholder="اكتب وصفاً قصيراً"></textarea></label>
+      <div class="up-progress hidden" id="short-progress"><i></i><b id="short-progress-n">0%</b></div>
+      <button class="primary-btn" type="submit" id="short-submit" disabled><i data-lucide="send"></i><span data-i18n="shorts.publish">نشر</span></button>
+      <div class="auth-error" id="short-error"></div>
+    </form>
+  </div>
+</div>
+
+<script src="/script.js"></script>
+<script src="/social.js"></script>
+<script src="/player.js"></script>
+<script src="/shorts.js"></script>
+<script src="/profile.js"></script>
+<script src="/extras.js"></script>
+<script src="/extras2.js"></script>
+<script src="/youtube.js"></script>
+<script src="/extras3.js"></script>
+<script src="/extras4.js"></script>
+<script src="/extras5.js"></script>
+<script src="/extras6.js"></script>
+<script src="/extras7.js"></script>
+<script src="/extras8.js"></script>
+<script src="/extras9.js"></script>
+<script src="/extras10.js"></script>
+<script src="/extras11.js"></script>
+<script src="/logo.js"></script><script src="/logo2.js"></script>
+</body>
+</html>

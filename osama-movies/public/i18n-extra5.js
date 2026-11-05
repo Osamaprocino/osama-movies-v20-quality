@@ -1,0 +1,41 @@
+/* نصوص الإصدار 13 بثلاث لغات [عربي، English، Русский] */
+(function(){
+const K={
+'pub.nav':['انشر فيلماً','Publish a movie','Опубликовать фильм'],
+'pub.title':['انشر فيلماً طويلاً','Publish a full-length movie','Опубликовать полнометражный фильм'],
+'pub.sub':['سيظهر فيلمك في الرئيسية وفي صفحة قناتك، ويصل إشعار لمشتركيك.','Your movie appears on the home page and on your channel; your subscribers get notified.','Фильм появится на главной и на вашем канале, подписчики получат уведомление.'],
+'pub.kids':['النشر غير متاح في وضع الأطفال','Publishing is not available in kids mode','Публикация недоступна в детском режиме'],
+'pub.fTitle':['عنوان الفيلم','Movie title','Название фильма'],
+'pub.fCat':['التصنيف','Category','Категория'],
+'pub.catPh':['مثال: دراما','e.g. Drama','напр. Драма'],
+'pub.fDesc':['الوصف','Description','Описание'],
+'pub.fPoster':['صورة الغلاف','Cover image','Обложка'],
+'pub.fVideo':['ملف الفيديو (MP4 / WebM)','Video file (MP4 / WebM)','Видеофайл (MP4 / WebM)'],
+'pub.more':['تفاصيل إضافية (اختيارية)','More details (optional)','Дополнительно (необязательно)'],
+'pub.year':['السنة','Year','Год'],'pub.director':['المخرج','Director','Режиссёр'],'pub.cast':['الممثلون (بفاصلة)','Cast (comma separated)','В ролях (через запятую)'],'pub.tags':['وسوم (بفاصلة)','Tags (comma separated)','Теги (через запятую)'],
+'pub.age':['التصنيف العمري','Age rating','Возрастной рейтинг'],'pub.series':['اسم المسلسل','Series name','Название сериала'],'pub.season':['الموسم','Season','Сезон'],'pub.episode':['الحلقة','Episode','Серия'],
+'pub.rules':['انشر فقط ما تملك حقوقه. يمكن للإدارة إخفاء أي محتوى مخالف.','Only publish content you own the rights to. Admins may remove violating content.','Публикуйте только то, на что у вас есть права. Администрация может удалить нарушающий контент.'],
+'pub.needFiles':['اختر صورة الغلاف وملف الفيديو.','Choose a cover image and a video file.','Выберите обложку и видеофайл.'],
+'pub.go':['نشر','Publish','Опубликовать'],
+'pub.done':['تم نشر فيلمك 🎉','Your movie is published 🎉','Фильм опубликован 🎉'],
+'pub.pending':['أُرسل فيلمك للمراجعة وسيظهر بعد موافقة الإدارة ✅','Your movie was sent for review and will appear once approved ✅','Фильм отправлен на проверку и появится после одобрения ✅'],
+'mine.pending':['بانتظار الموافقة','Awaiting approval','Ожидает одобрения'],
+'mine.nav':['أفلامي','My movies','Мои фильмы'],'mine.title':['أفلامي المنشورة','My published movies','Мои фильмы'],
+'mine.empty':['لم تنشر أي فيلم بعد','You have not published any movie yet','Вы ещё не публиковали фильмы'],
+'mine.open':['فتح','Open','Открыть'],'mine.edit':['تعديل','Edit','Изменить'],'mine.del':['حذف','Delete','Удалить'],
+'mine.delConfirm':['حذف «{title}» نهائياً؟','Delete “{title}” permanently?','Удалить «{title}» навсегда?'],
+'mine.deleted':['تم الحذف','Deleted','Удалено'],'mine.saved':['تم الحفظ','Saved','Сохранено'],'mine.processing':['قيد المعالجة','Processing','Обработка'],
+'chan.subscribe':['اشتراك','Subscribe','Подписаться'],'chan.subscribed':['مشترك','Subscribed','Вы подписаны'],
+'chan.subs':['{n} مشترك','{n} subscribers','{n} подписчиков'],'chan.movies':['{n} فيلم','{n} movies','{n} фильмов'],
+'chan.subsWord':['مشترك','subscribers','подписчиков'],'chan.moviesWord':['فيلم','movies','фильмов'],
+'chan.open':['فتح القناة','Open channel','Открыть канал'],'chan.yours':['قناتك','Your channel','Ваш канал'],
+'chan.films':['أفلام القناة','Channel movies','Фильмы канала'],'chan.noMovies':['لا توجد أفلام بعد','No movies yet','Фильмов пока нет'],
+'chan.site':['القناة الرسمية','Official channel','Официальный канал'],
+'chan.subOk':['تم الاشتراك — ستصلك إشعارات الأفلام الجديدة','Subscribed — you will get new-movie notifications','Вы подписались — придут уведомления о новинках'],
+'chan.subOff':['أُلغي الاشتراك','Unsubscribed','Подписка отменена'],
+'set.btn':['الإعدادات','Settings','Настройки'],'set.title':['الإعدادات','Settings','Настройки'],
+'notif.channel_movie':['{name} نشر فيلماً: {title}','{name} published: {title}','{name} опубликовал: {title}'],
+'notif.site_movie':['فيلم جديد: {title}','New movie: {title}','Новый фильм: {title}']
+};
+for(const [k,v] of Object.entries(K)){I18N.dict.ar[k]=v[0];I18N.dict.en[k]=v[1];I18N.dict.ru[k]=v[2]}
+})();

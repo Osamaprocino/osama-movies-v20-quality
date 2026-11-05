@@ -1,0 +1,4 @@
+1) ارفع ملف zip إلى السيرفر (WinSCP) ثم:  unzip osama-movies-v13-channels.zip && cd osama-movies
+2) bash deploy/deploy.sh      (يسألك عن الدومين وكلمة سر الإدارة)
+3) للتحديث لاحقاً: ارفع الملفات الجديدة فوق القديمة (بدون مجلدي data و uploads) ثم: systemctl restart cinema
+4) انسخ مجلد uploads دورياً بيدك (النسخ التلقائي يغطي data فقط لأن الأفلام كبيرة).
