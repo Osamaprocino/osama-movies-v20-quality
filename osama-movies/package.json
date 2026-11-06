@@ -1,6 +1,6 @@
 {
   "name": "osama-movies-mobile-app",
-  "version": "18.1.0-fx",
+  "version": "20.0.0-navui",
   "description": "منصة سينما أسامة: واجهة زجاجية بثلاث لغات (عربي/English/Русский)، ملف شخصي، Shorts، مشغل فيديو بزجاج سائل وترجمة فورية.",
   "main": "server.js",
   "scripts": {

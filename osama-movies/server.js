@@ -37,7 +37,8 @@ fs.mkdirSync(AVATARS_DIR, { recursive: true });
 translator.initCache(path.join(DATA_DIR, 'translate-cache.json'));
 
 app.disable('x-powered-by');
-app.set('trust proxy', true);
+const sec = require('./lib/sec'); // v19: طبقة الأمان
+sec.early(app);
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -58,6 +59,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json({ limit: '200kb' }));
+sec.init({ app, DATA_DIR, ROOT, ADMIN_FILE, mailer: require('./lib/mailer'), getSession: req => getSession(req) });
 app.use(express.urlencoded({ extended: true }));
 
 function readJSON(file, fallback) {
@@ -165,7 +167,8 @@ function parseCookies(req) {
   return out;
 }
 function setSessionCookie(res, token) {
-  res.setHeader('Set-Cookie', `admin_session=${encodeURIComponent(token)}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${SESSION_TTL/1000}`);
+  const sc = res.req && (res.req.secure || res.req.headers['x-forwarded-proto'] === 'https') ? '; Secure' : '';
+  res.setHeader('Set-Cookie', `admin_session=${encodeURIComponent(token)}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${SESSION_TTL/1000}${sc}`);
 }
 function clearSessionCookie(res) {
   res.setHeader('Set-Cookie', 'admin_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0');
@@ -176,6 +179,11 @@ function getSession(req) {
   const session = sessions.get(token);
   if (!session) return null;
   if (session.expiresAt < Date.now()) { sessions.delete(token); return null; }
+  if (session.ua && session.ua !== String(req.headers['user-agent'] || '').slice(0, 200)) { // مؤشر سرقة جلسة: تغيّر المتصفح
+    sessions.delete(token);
+    sec.record({ type: 'session_hijack', severity: 'HIGH', action: 'blocked', ip: req.ip, method: req.method, url: req.originalUrl, ua: req.headers['user-agent'], user: session.username, rule: 'session-ua-mismatch', details: 'تغيّر المتصفح داخل نفس الجلسة؛ أُنهيت الجلسة' });
+    return null;
+  }
   session.expiresAt = Date.now() + SESSION_TTL;
   return session;
 }
@@ -200,15 +208,23 @@ app.post('/api/auth/login',(req,res)=>{
   const ip=req.ip||req.socket.remoteAddress||'unknown';
   if(tooManyAttempts(ip)) return res.status(429).json({error:'محاولات كثيرة، حاول لاحقاً.'});
   const admin=readJSON(ADMIN_FILE,null);
-  const {username,password}=req.body||{};
+  const {username,password,otp}=req.body||{};
   if(!admin) return res.status(503).json({error:'حساب الأدمن غير مُعد. نفّذ npm run admin:create.'});
-  if(typeof username!=='string'||typeof password!=='string'||username!==admin.username||!verifyPassword(password,admin))
+  const lock=sec.loginGate(req,username);
+  if(lock) return res.status(429).json({error:`الدخول مقفل مؤقتاً لأسباب أمنية. حاول بعد ${Math.ceil(lock/60)} دقيقة.`});
+  if(typeof username!=='string'||typeof password!=='string'||username!==admin.username||!verifyPassword(password,admin)){
+    sec.loginFail(req,username);
     return res.status(401).json({error:'اسم المستخدم أو كلمة المرور غير صحيحة.'});
+  }
+  const o=sec.checkOtp(otp);   // المصادقة الثنائية (اختيارية، تُفعَّل من لوحة الأمان)
+  if(o==='required') return res.status(401).json({error:'أدخل رمز التحقق الثنائي.',need_otp:true});
+  if(o==='bad'){ sec.loginFail(req,username,'otp'); return res.status(401).json({error:'رمز التحقق غير صحيح.',need_otp:true}); }
   loginAttempts.delete(ip);
   const token=crypto.randomBytes(32).toString('hex');
-  sessions.set(token,{username:admin.username,createdAt:Date.now(),expiresAt:Date.now()+SESSION_TTL});
+  sessions.set(token,{username:admin.username,createdAt:Date.now(),expiresAt:Date.now()+SESSION_TTL,ua:String(req.headers['user-agent']||'').slice(0,200)});
   setSessionCookie(res,token);
   recordEvent('admin_login',{username:admin.username});
+  sec.loginOk(req,admin.username);
   res.json({success:true,username:admin.username});
 });
 app.post('/api/admin/password',sameOrigin,requireAdmin,(req,res)=>{
@@ -1037,6 +1053,8 @@ const v10ctx = {
   passwordProblem, scryptAsync, SCRYPT_OPTS, hashToken, userSessions, persistSessions, getSession,
   autoVerifyReceipt, normalizeReceipt, paymentStatusFor, DATA_DIR, UPLOADS, ROOT, PRIVATE_DIR, SHORTS_DIR, SUBS_DIR, unlinkQuiet
 };
+sec.routes({ app, requireAdmin, sameOrigin, sessions, hit, ROOT, DATA_DIR, ADMIN_FILE, mailer: require('./lib/mailer'), adminName: () => { const a = readJSON(ADMIN_FILE, null); return a && a.username; } });
+require('./lib/siteui')({ app, requireAdmin, sameOrigin, readJSON, writeJSONAtomic, DATA_DIR });
 require('./lib/v10')(v10ctx);
 require('./lib/v11')({ ...v10ctx, startUserSession, authorOf, userMap, findTarget, USERNAME_RE, summaryFrom, shapeComment, upload: { fields: (...a) => (rq, rs, nx) => upload.fields(...a)(rq, rs, nx), single: (...a) => (rq, rs, nx) => upload.single(...a)(rq, rs, nx) }, sniffFile, cleanupMovieExtras });
 
@@ -1165,4 +1183,5 @@ app.use((err,req,res,next)=>{
   next();
 });
 
-app.listen(PORT,()=>console.log(`Cinema server listening on http://localhost:${PORT}`));
+const srv = app.listen(PORT,()=>console.log(`Cinema server listening on http://localhost:${PORT}`));
+sec.server(srv);
