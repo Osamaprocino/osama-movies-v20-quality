@@ -1,0 +1,33 @@
+/* v20 — ميزات راقية: معاينة سريعة للفيلم، زر الصعود بحلقة تقدم، تلاشي حواف الصفوف، تلميح التثبيت */
+.hrow-scroll{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent 100%)}
+.pk{position:fixed;z-index:2400;width:300px;border-radius:18px;padding:14px 16px 14px;background:rgba(255,255,255,.82);color:#101828;border:1px solid rgba(255,255,255,.7);box-shadow:0 24px 60px -18px rgba(15,23,42,.45);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);opacity:0;transform:translateY(8px) scale(.97);pointer-events:none;transition:opacity .22s,transform .28s cubic-bezier(.2,.8,.2,1)}
+.pk.on{opacity:1;transform:none;pointer-events:auto}
+[data-theme="dark"] .pk,html.dark .pk,body.dark .pk{background:rgba(24,31,46,.86);color:#eef2fb;border-color:rgba(255,255,255,.1)}
+.pk h5{margin:0 0 4px;font-size:16px;line-height:1.35}
+.pk .pk-m{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12.5px;opacity:.8;margin-bottom:8px}
+.pk .pk-r{font-weight:700;color:#b8731a}
+.pk p{margin:0 0 12px;font-size:13px;line-height:1.55;opacity:.88;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.pk .pk-b{display:flex;gap:8px}
+.pk button{flex:1;border:0;border-radius:12px;padding:9px 10px;font:600 13px inherit;cursor:pointer;transition:transform .15s,filter .2s}
+.pk button:hover{filter:brightness(1.06)}.pk button:active{transform:scale(.96)}
+.pk .pk-play{background:linear-gradient(135deg,#3478f6,#6a5cf0);color:#fff}
+.pk .pk-save{background:rgba(120,130,150,.18);color:inherit}
+@media(hover:none),(pointer:coarse){.pk{display:none}}
+/* العودة للأعلى */
+.btt{position:fixed;inset-inline-start:18px;bottom:96px;z-index:900;width:46px;height:46px;border-radius:50%;border:0;padding:0;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 24px -8px rgba(15,23,42,.4);display:grid;place-items:center;cursor:pointer;opacity:0;transform:translateY(14px) scale(.9);pointer-events:none;transition:opacity .25s,transform .3s cubic-bezier(.2,.8,.2,1)}
+.btt.on{opacity:1;transform:none;pointer-events:auto}
+.btt svg{position:absolute;inset:0;width:46px;height:46px;transform:rotate(-90deg)}
+.btt circle{fill:none;stroke-width:3}.btt .t{stroke:rgba(120,130,150,.25)}.btt .p{stroke:#3478f6;stroke-linecap:round;stroke-dasharray:125.7;stroke-dashoffset:125.7}
+.btt i{position:relative;width:18px;height:18px;display:block;border-top:3px solid #3478f6;border-inline-start:3px solid #3478f6;transform:translateY(3px) rotate(45deg);border-radius:2px}
+[data-theme="dark"] .btt,html.dark .btt,body.dark .btt{background:rgba(24,31,46,.85)}
+@media(min-width:900px){.btt{bottom:28px}}
+/* تلميح تثبيت التطبيق */
+.ins{position:fixed;inset-inline:14px;bottom:92px;z-index:2300;max-width:420px;margin-inline:auto;border-radius:20px;padding:14px;display:flex;gap:12px;align-items:center;background:rgba(255,255,255,.9);color:#101828;box-shadow:0 20px 50px -16px rgba(15,23,42,.5);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);animation:ins-in .5s cubic-bezier(.2,.9,.3,1.1)}
+[data-theme="dark"] .ins,html.dark .ins,body.dark .ins{background:rgba(24,31,46,.92);color:#eef2fb}
+.ins img{width:48px;height:48px;border-radius:12px;flex:none}
+.ins b{display:block;font-size:14px}.ins span{font-size:12.5px;opacity:.8;line-height:1.5}
+.ins button{border:0;border-radius:10px;padding:8px 12px;font:600 13px inherit;cursor:pointer;background:linear-gradient(135deg,#3478f6,#6a5cf0);color:#fff;flex:none}
+.ins .x{background:transparent;color:inherit;opacity:.55;padding:6px 8px}
+@keyframes ins-in{from{opacity:0;transform:translateY(24px)}}
+html.no-motion .pk,html.no-motion .btt,html.no-motion .ins{transition:none;animation:none}
+@media(prefers-reduced-motion:reduce){.pk,.btt,.ins{transition:none;animation:none}}

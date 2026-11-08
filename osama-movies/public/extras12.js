@@ -54,11 +54,11 @@ if(fine){
 }
 
 /* 6) قصاصات احتفال عند أول تسجيل/إنشاء حساب ناجح (حدث اختياري يطلقه أي كود: window.dispatchEvent(new Event('osama:celebrate'))) */
-window.Cinema12={confetti(n){
+window.Cinema12={confetti(n){return;
   if(reduce())return;n=n||60;const cols=['#f5b942','#ec4899','#8b5cf6','#3478f6','#22c55e'];
   for(let i=0;i<n;i++){const c=document.createElement('i');c.className='fx-confetti';
     c.style.cssText=`left:${Math.random()*100}vw;background:${cols[i%5]};animation-duration:${1.6+Math.random()*1.4}s;animation-delay:${Math.random()*.4}s;--cx:${(Math.random()*160-80)|0}px;--cr:${(Math.random()*720-360)|0}deg`;
     document.body.appendChild(c);setTimeout(()=>c.remove(),3600)}
 }};
-window.addEventListener('osama:celebrate',()=>window.Cinema12.confetti());
+/* الاحتفال بالقصاصات أُلغي بطلب المالك */
 })();

@@ -1,0 +1,13 @@
+/* v20 — refined polish: header condense, hero parallax, blur-up images, tactile press, accent rule */
+html:not(.no-motion) .topbar{transition:box-shadow .35s}
+.topbar.fx15-scrolled{box-shadow:0 8px 30px -12px rgba(15,23,42,.28)}
+.hero #hero-poster img{will-change:transform;transform:translate3d(0,var(--py,0px),0) scale(var(--ps,1.06))}
+.hero .hero-content,.hero .hero-info{will-change:transform,opacity}
+.movie-card .poster img.fx15-bu{opacity:0;filter:blur(14px);transform:scale(1.06)}
+.movie-card .poster img.fx15-bu.fx15-in{opacity:1;filter:none;transform:none;transition:opacity .6s ease,filter .7s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+html:not(.no-motion) button:not(:disabled):active,html:not(.no-motion) .btn:active,html:not(.no-motion) .chip:active{transform:scale(.96);transition:transform .12s}
+.section-head h2{position:relative}
+.section-head h2::after{content:"";display:block;height:3px;width:0;border-radius:3px;margin-top:6px;background:linear-gradient(90deg,#f6bd45,#a1275f);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.section-head h2.fx15-on::after{width:46px}
+html.no-motion .movie-card .poster img.fx15-bu,html.no-motion .hero #hero-poster img{opacity:1;filter:none;transform:none}
+@media(prefers-reduced-motion:reduce){.movie-card .poster img.fx15-bu{opacity:1;filter:none;transform:none}.hero #hero-poster img{transform:none}}

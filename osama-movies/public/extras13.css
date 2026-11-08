@@ -1,7 +1,7 @@
 /* v19.2 — شريط سفلي حيّ + مؤثرات سينمائية إضافية. تحترم no-motion و prefers-reduced-motion */
 /* ===== الشريط السفلي v2: شريط عائم بحافة منحنية (notch) وفقاعة متوهجة تنزلق وتتبدّل ألوانها ===== */
 html.bn-on body nav.bottom-nav{left:10px;right:10px;bottom:calc(8px + env(safe-area-inset-bottom));height:104px;padding:40px 22px 0;background:transparent!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-radius:0;overflow:visible;align-items:start;--bn-bg:#fff;--bn-c:#3478f6;pointer-events:none}
-html.dark.bn-on body nav.bottom-nav{--bn-bg:#141c28}
+html.dark.bn-on body nav.bottom-nav{--bn-bg:#1a2434}
 html.bn-on .bottom-nav>*{pointer-events:auto}
 .bn-shadow{position:absolute;inset:0;pointer-events:none;filter:drop-shadow(0 -3px 12px rgba(40,50,110,.12)) drop-shadow(0 12px 26px rgba(10,15,40,.22))}
 .bn-bg{position:absolute;inset:0;background:var(--bn-bg);border-radius:0 0 16px 16px;transition:clip-path .6s cubic-bezier(.3,1.2,.4,1)}

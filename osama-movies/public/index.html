@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#eef3fb">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/app-icon/180.png"><link rel="icon" type="image/png" href="/app-icon/192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="سينما أسامة">
-<script>try{if(localStorage.getItem("osama_theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
+<meta name="apple-mobile-web-app-title" content="Cineo">
+<script src="/theme-init.js"></script>
 <script src="/i18n.js"></script>
 <script src="/i18n-extra.js"></script>
 <script src="/i18n-extra2.js"></script>
@@ -38,6 +38,15 @@
 <link rel="stylesheet" href="/extras11.css">
 <link rel="stylesheet" href="/extras12.css">
 <link rel="stylesheet" href="/extras13.css">
+<link rel="stylesheet" href="/extras14.css">
+<link rel="stylesheet" href="/extras15.css">
+<link rel="stylesheet" href="/extras16.css">
+<link rel="stylesheet" href="/extras17.css">
+<link rel="stylesheet" href="/extras18.css">
+<link rel="stylesheet" href="/extras20.css">
+<link rel="stylesheet" href="/extras21.css">
+<link rel="stylesheet" href="/extras22.css">
+<link rel="stylesheet" href="/extras23.css">
 <link rel="stylesheet" href="/logo.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:wght@600;700&display=swap"><link rel="stylesheet" href="/logo2.css">
 <link rel="stylesheet" href="/liquid.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -78,6 +87,7 @@
       <button data-tab="shorts"><i data-lucide="zap"></i><span data-i18n="nav.shorts">Shorts</span></button>
       <button data-tab="saved"><i data-lucide="bookmark"></i><span data-i18n="nav.saved">المحفوظات</span></button>
       <button data-tab="history"><i data-lucide="history"></i><span data-i18n="nav.history">سجل المشاهدة</span></button>
+      <button data-tab="music"><i data-lucide="music"></i><span data-i18n="nav.music">الموسيقى</span></button>
       <button data-tab="profile" id="nav-profile" class="hidden"><i data-lucide="user-round"></i><span data-i18n="nav.profile">ملفي الشخصي</span></button>
     </nav>
     <div class="side-section-title" data-i18n="nav.library">المكتبة</div>
@@ -91,7 +101,6 @@
     </div>
     <button id="auth-btn"><i data-lucide="log-in"></i><span data-i18n="nav.login">تسجيل الدخول</span></button>
     <a href="/admin"><i data-lucide="layout-dashboard"></i><span data-i18n="nav.admin">لوحة الإدارة</span></a>
-    <button id="theme-btn"><i data-lucide="moon"></i><span data-i18n="nav.dark">الوضع الداكن</span></button>
   </div>
 </aside>
 
@@ -108,6 +117,7 @@
           <button type="button" data-lang="ru" role="menuitem">Русский</button>
         </div>
       </div>
+      <button class="icon-btn" id="theme-btn" type="button" aria-label="الوضع الداكن" title="الوضع الداكن"><i data-lucide="moon"></i><span data-i18n="nav.dark">الوضع الداكن</span></button>
       <button class="icon-btn" id="search-open" data-i18n-aria="nav.search" aria-label="بحث"><i data-lucide="search"></i></button>
       <a class="icon-btn desktop-admin" href="/admin" data-i18n-aria="nav.admin" aria-label="الإدارة"><i data-lucide="layout-dashboard"></i></a>
     </div>
@@ -298,7 +308,7 @@
     <button data-tab="shorts"><i data-lucide="zap"></i><span data-i18n="nav.shorts">Shorts</span></button>
     <button data-tab="saved"><i data-lucide="bookmark"></i><span data-i18n="nav.saved">المحفوظات</span></button>
     <button data-tab="history"><i data-lucide="history"></i><span data-i18n="nav.historyShort">السجل</span></button>
-    <a href="/admin"><i data-lucide="layout-dashboard"></i><span data-i18n="nav.adminShort">الإدارة</span></a>
+    <button data-tab="subs"><i data-lucide="users"></i><span data-i18n="nav.subs">الاشتراكات</span></button>
   </nav>
 </div>
 
@@ -372,6 +382,16 @@
 <script src="/extras11.js"></script>
 <script src="/extras12.js"></script>
 <script src="/extras13.js"></script>
+<script src="/extras14.js"></script>
+<script src="/extras15.js"></script>
+<script src="/extras16.js"></script>
+<script src="/extras17.js"></script>
+<script src="/extras18.js"></script>
+<script src="/extras19.js"></script>
+<script src="/extras20.js"></script>
+<script src="/extras21.js"></script>
+<script src="/extras22.js"></script>
+<script src="/extras23.js"></script>
 <script src="/logo.js"></script><script src="/logo2.js"></script>
 </body>
 </html>

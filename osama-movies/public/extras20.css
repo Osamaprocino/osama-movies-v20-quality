@@ -1,0 +1,21 @@
+/* v20 — extras20: زر المظهر في الشريط العلوي + ظهور تدريجي لبطاقات الأفلام (كلاسيك ويوتيوب) */
+.top-actions #theme-btn{width:42px;height:42px;min-width:0;padding:0}
+.top-actions #theme-btn span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.top-actions #theme-btn svg,.top-actions #theme-btn i{transition:transform .5s cubic-bezier(.3,1.6,.4,1)}
+.top-actions #theme-btn:hover svg,.top-actions #theme-btn:hover i{transform:rotate(18deg)}
+.top-actions #theme-btn:active svg,.top-actions #theme-btn:active i{transform:rotate(90deg) scale(.9)}
+/* الحالة الأولية تُضاف بالسكربت فقط، فلا تختفي البطاقات إن تعطّل */
+.movie-card.cv-pre{opacity:0}
+.movie-card.cv-in{animation:cvIn .6s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--cv-i,0) * 55ms)}
+.yt .movie-card.cv-in{animation-name:cvInYt}
+@keyframes cvIn{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes cvInYt{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+html.no-motion .movie-card.cv-pre{opacity:1}
+html.no-motion .movie-card.cv-in{animation:none}
+@media(prefers-reduced-motion:reduce){.movie-card.cv-pre{opacity:1}.movie-card.cv-in{animation:none}}
+
+/* الشاشات الضيقة: لا يُقصّ أي زر في الشريط العلوي (البحث/الإشعارات) */
+.top-actions{flex-shrink:0}
+@media(max-width:560px){.topbar{gap:8px}.top-actions{gap:6px!important}.top-actions>.icon-btn,.top-actions>button,.top-actions>a,.top-actions .lang-btn,.top-actions #lang-pop>button{width:36px!important;height:36px!important;min-width:0;border-radius:12px}.top-actions svg{width:17px;height:17px}}
+@media(max-width:480px){.brand-compact strong{display:none}}
+@media(max-width:360px){.topbar{padding-inline:8px}.top-actions{gap:4px!important}.top-actions>*{width:34px!important;height:34px!important}}

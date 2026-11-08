@@ -238,7 +238,7 @@ module.exports = function registerV11(c) {
   };
   const passOk = async (rec, pw) => {
     if (typeof pw !== 'string' || pw.length > 128 || !rec.hash) return false;
-    const h = await scryptAsync(pw, rec.salt, 64, SCRYPT_OPTS); return crypto.timingSafeEqual(h, Buffer.from(rec.hash, 'hex'));
+    return require('./pwhash').check(pw, rec);
   };
   const setPin = async (rec, pin) => { const salt = crypto.randomBytes(16).toString('hex'); rec.kids = { ...(rec.kids || {}), salt, hash: (await scryptAsync(pin, salt, 64, SCRYPT_OPTS)).toString('hex') }; };
   app.post('/api/user/kids', sameOrigin, requireUser, async (req, res) => {

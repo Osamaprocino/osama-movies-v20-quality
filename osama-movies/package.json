@@ -1,6 +1,6 @@
 {
   "name": "osama-movies-mobile-app",
-  "version": "20.0.0-navui",
+  "version": "22.0.0",
   "description": "منصة سينما أسامة: واجهة زجاجية بثلاث لغات (عربي/English/Русский)، ملف شخصي، Shorts، مشغل فيديو بزجاج سائل وترجمة فورية.",
   "main": "server.js",
   "scripts": {
@@ -8,10 +8,13 @@
     "admin:create": "node create-admin.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "multer": "^2.5.0"
+    "express": "^4.21.2",
+    "multer": "^2.0.2"
   },
   "engines": {
     "node": ">=18"
+  },
+  "optionalDependencies": {
+    "@node-rs/argon2": "^2.0.2"
   }
 }

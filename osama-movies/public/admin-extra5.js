@@ -50,19 +50,6 @@ const SECTION=`<section class="admin-section hidden" id="section-assist"><div cl
   <button class="secondary-admin" id="ai-chkgo" type="button" style="margin-top:8px">فحص</button><p class="hint" id="ai-chkres"></p></section>
 </div></section>`;
 function msg(cls,html){const l=$$('#ai-log');l.insertAdjacentHTML('beforeend',`<div style="padding:9px 12px;border-radius:14px;${cls==='me'?'background:var(--accent,#3478f6);color:#fff;justify-self:end':'background:rgba(127,127,127,.14)'};max-width:94%;line-height:1.7">${html}</div>`);l.scrollTop=l.scrollHeight}
-let planSeq=0;const plans={};
-function showPlan(pl){
-  const id=++planSeq;plans[id]=pl;
-  msg('bot',`<b>${pl.danger?'⚠️ ':'🛠️ '}سأنفّذ:</b><br>${E(pl.summary).replace(/\n/g,'<br>')}<div style="display:flex;gap:6px;margin-top:8px"><button type="button" class="primary-admin ai-run" data-p="${id}">تنفيذ (${pl.steps.length})</button><button type="button" class="secondary-admin ai-cancel" data-p="${id}">إلغاء</button></div>`);
-}
-async function runPlan(id,box){
-  const pl=plans[id];if(!pl)return;delete plans[id];box.querySelectorAll('button').forEach(b=>b.disabled=true);
-  let ok=0,fail=0;const errs=[];
-  for(const st of pl.steps){try{await api(st.url,{method:st.method,headers:{'Content-Type':'application/json'},body:st.body===undefined?undefined:JSON.stringify(st.body)});ok++}catch(e){fail++;errs.push(`${st.label}: ${e.message}`)}}
-  msg('bot',`${fail?'⚠️':'✅'} تم التنفيذ: ${ok} نجح${fail?' / '+fail+' فشل':''}${errs.length?'<br><small>'+errs.slice(0,5).map(E).join('<br>')+'</small>':''}`);
-  try{await post('/api/admin/assist/log',{summary:pl.summary.split('\n')[0],ok,fail})}catch{}
-  try{if(typeof loadAll==='function')loadAll()}catch{}
-}
 const OKURL=/^\/api\/(admin\/|movies\/[\w-]+$)/;
 async function runPlan(box,d){
   const btn=box.querySelector('.ag-go'),log=box.querySelector('.ag-log');btn.disabled=true;let okN=0,bad=0;
@@ -122,7 +109,7 @@ function inject(){
   const nav=document.querySelector('.admin-nav');nav.insertAdjacentHTML('beforeend','<button data-section="assist" type="button"><i data-lucide="sparkles"></i><span>مساعد الإدارة</span></button>');
   nav.querySelector('[data-section="assist"]').onclick=()=>showSection('assist');
   $$('#ai-form').onsubmit=e=>{e.preventDefault();const i=$$('#ai-in'),v=i.value.trim();i.value='';if(v)ask(v)};
-  $$('#section-assist').addEventListener('click',e=>{const q=e.target.closest('.ai-q');if(q)ask(q.textContent);const cm=e.target.closest('.ai-cmd');if(cm)ask(cm.dataset.q);const ku=e.target.closest('.kb-u');if(ku){$$('#kb-q').value=ku.dataset.q;$$('#kb-a').focus()}const kd=e.target.closest('.kb-del');if(kd)api('/api/admin/assist-kb/'+kd.dataset.id,{method:'DELETE'}).then(loadKB);const md=e.target.closest('.mc-del');if(md)api('/api/admin/agent/learned/'+md.dataset.id,{method:'DELETE'}).then(loadMacros);const sd=e.target.closest('.si-del');if(sd)api('/api/admin/search-synonyms/'+encodeURIComponent(sd.dataset.w),{method:'DELETE'}).then(loadSI);const sz=e.target.closest('.si-z');if(sz){$$('#si-w').value=sz.dataset.q;$$('#si-m').focus()}const un=e.target.closest('.ag-undo');if(un)doUndo(un.dataset.id);const g=e.target.closest('.ai-go');if(g)showSection(g.dataset.s);const r=e.target.closest('.ai-run');if(r)runPlan(r.dataset.p,r.parentElement);const x=e.target.closest('.ai-cancel');if(x){delete plans[x.dataset.p];x.parentElement.querySelectorAll('button').forEach(b=>b.disabled=true);msg('bot','تم الإلغاء.')}});
+  $$('#section-assist').addEventListener('click',e=>{const q=e.target.closest('.ai-q');if(q)ask(q.textContent);const cm=e.target.closest('.ai-cmd');if(cm)ask(cm.dataset.q);const ku=e.target.closest('.kb-u');if(ku){$$('#kb-q').value=ku.dataset.q;$$('#kb-a').focus()}const kd=e.target.closest('.kb-del');if(kd)api('/api/admin/assist-kb/'+kd.dataset.id,{method:'DELETE'}).then(loadKB);const md=e.target.closest('.mc-del');if(md)api('/api/admin/agent/learned/'+md.dataset.id,{method:'DELETE'}).then(loadMacros);const sd=e.target.closest('.si-del');if(sd)api('/api/admin/search-synonyms/'+encodeURIComponent(sd.dataset.w),{method:'DELETE'}).then(loadSI);const sz=e.target.closest('.si-z');if(sz){$$('#si-w').value=sz.dataset.q;$$('#si-m').focus()}const un=e.target.closest('.ag-undo');if(un)doUndo(un.dataset.id);const g=e.target.closest('.ai-go');if(g)showSection(g.dataset.s);});
   $$('#ap-save').onclick=()=>api('/api/admin/autopilot',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({enabled:$$('#ap-en').checked,fillDescriptions:$$('#ap-desc').checked,addTags:$$('#ap-tags').checked,approveVerified:$$('#ap-ver').checked})}).then(()=>toast('تم الحفظ')).catch(e=>toast(e.message,'error'));
   $$('#ap-run').onclick=async()=>{try{const r=await post('/api/admin/autopilot/run',{});toast(r.did.length?r.did.join('، '):'لا جديد للعمل عليه');loadAP();loadSug()}catch(e){toast(e.message,'error')}};
   $$('#ll-save').onclick=()=>api('/api/admin/agent/llm',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({baseUrl:$$('#ll-url').value,model:$$('#ll-model').value,...($$('#ll-key').value?{apiKey:$$('#ll-key').value}:{}),enabled:$$('#ll-en').checked})}).then(()=>{$$('#ll-key').value='';toast('تم الحفظ');loadAP()}).catch(e=>toast(e.message,'error'));

@@ -1,0 +1,16 @@
+/* v20.2 — extras21 */
+.fx21-fly{position:fixed;z-index:9000;background-size:cover;background-position:center;pointer-events:none;box-shadow:0 20px 60px rgba(0,0,0,.35);will-change:transform,opacity}
+html.fxoff-cursor #fx-cursor{display:none!important}
+html.data-saver .hero-poster img,html.data-saver .poster img{image-rendering:auto}
+html.data-saver #fx-cursor,html.data-saver .fx-particles,html.data-saver canvas#fx-particles{display:none!important}
+/* تعتيم السينما: يخفّت ما حول المشغّل فقط، ويعود فوراً عند المرور عليه */
+html.cinema .topbar,html.cinema .bottom-nav,html.cinema .sidebar,html.cinema #player-view>*:not(.player):not(#soon-panel){opacity:.14;transition:opacity .6s ease}
+html.cinema .topbar:hover,html.cinema .bottom-nav:hover,html.cinema .sidebar:hover,html.cinema #player-view>*:not(.player):hover,html.cinema .topbar:focus-within,html.cinema .bottom-nav:focus-within{opacity:1}
+html.cinema body{background-color:#05070b}
+.fx21-look{margin:14px 0}.fx21-hint{opacity:.7;font-size:12px}
+.fx21-shares{display:grid;gap:8px;margin-top:10px}.fx21-sh{display:flex;gap:8px;align-items:center}.fx21-sh>div{flex:1;min-width:0;display:grid}.fx21-sh small{opacity:.7}
+.fx21-shared{position:fixed;inset:0;z-index:8000;background:rgba(6,10,18,.82);overflow:auto;padding:max(16px,env(safe-area-inset-top)) 16px 32px;display:flex;justify-content:center;align-items:flex-start}
+.fx21-shared .fx21-shared-in{width:min(1100px,100%);padding:20px;border-radius:22px;margin-top:4vh;background:#f4f7fb;color:var(--text);border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.45)}html.dark .fx21-shared .fx21-shared-in{background:#18212d}
+.fx21-shared-in .section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;flex-wrap:wrap}.fx21-shared-in .movie-grid{margin-top:6px}
+.fx21-acts{display:flex;gap:8px;align-items:center}
+html.no-motion .fx21-fly{display:none}

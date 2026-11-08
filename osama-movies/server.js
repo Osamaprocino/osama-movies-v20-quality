@@ -39,6 +39,8 @@ translator.initCache(path.join(DATA_DIR, 'translate-cache.json'));
 app.disable('x-powered-by');
 const sec = require('./lib/sec'); // v19: طبقة الأمان
 sec.early(app);
+require('./lib/sec4').early(app, sec);
+require('./lib/perf').early(app);
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -59,6 +61,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json({ limit: '200kb' }));
+app.use((req, res, next) => { if (req.body === null || typeof req.body !== 'object') req.body = {}; next(); }); // حارس: لا يصل للمعالجات body غير كائن
 sec.init({ app, DATA_DIR, ROOT, ADMIN_FILE, mailer: require('./lib/mailer'), getSession: req => getSession(req) });
 app.use(express.urlencoded({ extended: true }));
 
@@ -145,15 +148,9 @@ function summarizeAnalytics() {
   };
 }
 
-function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
-  return { salt, hash: crypto.scryptSync(password, salt, 64).toString('hex') };
-}
-function verifyPassword(password, record) {
-  try {
-    const candidate = crypto.scryptSync(password, record.salt, 64);
-    return crypto.timingSafeEqual(candidate, Buffer.from(record.hash, 'hex'));
-  } catch { return false; }
-}
+const pwhash = require('./lib/pwhash'); // Argon2id عند توفر المكتبة وإلا scrypt (والسجلات القديمة تبقى صالحة)
+function hashPassword(password) { return pwhash.makeSync(password); }
+function verifyPassword(password, record) { return pwhash.checkSync(password, record); }
 
 const sessions = new Map();
 const loginAttempts = new Map();
@@ -234,7 +231,7 @@ app.post('/api/admin/password',sameOrigin,requireAdmin,(req,res)=>{
   if(!admin||typeof current!=='string'||!verifyPassword(current,admin)) return res.status(403).json({error:'كلمة المرور الحالية غير صحيحة.'});
   if(typeof next!=='string'||next.length<10||next.length>200) return res.status(400).json({error:'كلمة المرور الجديدة يجب أن تكون 10 أحرف على الأقل.'});
   if(next===current) return res.status(400).json({error:'اختر كلمة مرور مختلفة عن الحالية.'});
-  const rec={...admin,...hashPassword(next),changedAt:new Date().toISOString()};
+  const nh=hashPassword(next);const rec={...admin,...nh,changedAt:new Date().toISOString()};if(!nh.alg)delete rec.alg;
   fs.writeFileSync(ADMIN_FILE,JSON.stringify(rec,null,2),{encoding:'utf8',mode:0o600});
   const mine=parseCookies(req).admin_session;
   for(const k of [...sessions.keys()]) if(k!==mine) sessions.delete(k); // إنهاء كل الجلسات الأخرى
@@ -368,12 +365,11 @@ app.post('/api/user/register', sameOrigin, async (req, res) => {
   if (email.length > 254 || !EMAIL_RE.test(email)) return res.status(400).json({ error: tr(req, 'email_invalid'), code: 'email_invalid' });
   const problem = passwordProblem(password, name);
   if (problem) return res.status(400).json({ error: problem });
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = (await scryptAsync(password, salt, 64, SCRYPT_OPTS)).toString('hex');
+  const ph = await pwhash.make(password);
   const users = getUsers();
   if (users.some(u => u.usernameLower === name.toLowerCase())) return res.status(409).json({ error: 'اسم المستخدم مستخدم بالفعل.' });
   if (users.some(u => u.email === email)) return res.status(409).json({ error: tr(req, 'email_taken'), code: 'email_taken' });
-  const user = { id: crypto.randomUUID(), username: name, usernameLower: name.toLowerCase(), displayName: name, email, avatarUrl: '', age: null, salt, hash, createdAt: new Date().toISOString() };
+  const user = { id: crypto.randomUUID(), username: name, usernameLower: name.toLowerCase(), displayName: name, email, avatarUrl: '', age: null, salt: ph.salt, hash: ph.hash, ...(ph.alg ? { alg: ph.alg } : {}), createdAt: new Date().toISOString() };
   users.push(user); saveUsers(users);
   startUserSession(req, res, user);
   recordEvent('user_register', { username: name });
@@ -390,10 +386,12 @@ app.post('/api/user/login', sameOrigin, async (req, res) => {
   if (isBlocked(key, 6) || hit(`login-ip:${ip}`, 40, 15 * 60 * 1000))
     return res.status(429).json({ error: 'محاولات كثيرة، حاول بعد 15 دقيقة.' });
   const rec = getUsers().find(u => u.usernameLower === ident || (u.email && u.email === ident));
-  const candidate = await scryptAsync(password, rec ? rec.salt : DUMMY_SALT, 64, SCRYPT_OPTS);
-  const ok = !!rec && crypto.timingSafeEqual(candidate, Buffer.from(rec.hash, 'hex'));
-  if (!ok) { hit(key, 6, 15 * 60 * 1000); return res.status(401).json({ error: 'اسم المستخدم أو كلمة المرور غير صحيحة.' }); }
+  const ok = rec ? await pwhash.check(password, rec) : (await pwhash.dummyCheck(password), false);
+  if (!ok) { hit(key, 6, 15 * 60 * 1000); sec.userLoginFail(req, ident); return res.status(401).json({ error: 'اسم المستخدم أو كلمة المرور غير صحيحة.' }); }
   buckets.delete(key);
+  if (pwhash.needsUpgrade(rec)) { // ترقية تجزئة قديمة (scrypt) إلى Argon2id بعد دخول ناجح — لا تمسّ أي حقل آخر
+    try { const h = await pwhash.make(password); const us = getUsers(); const uu = us.find(x => x.id === rec.id); if (uu) { pwhash.apply(uu, h); saveUsers(us); } } catch { /* تجاهل: يبقى السجل القديم صالحاً */ }
+  }
   startUserSession(req, res, rec);
   res.json({ success: true, username: rec.username, user: publicUser(rec) });
 });
@@ -673,16 +671,14 @@ app.post('/api/user/password', sameOrigin, requireUser, async (req, res) => {
   if (hit(`pw-change:${u0.id}`, 6, 15 * 60 * 1000)) return res.status(429).json({ error: 'محاولات كثيرة، حاول لاحقاً.' });
   const { current, next } = req.body || {};
   if (typeof current !== 'string' || typeof next !== 'string' || current.length > 128) return res.status(400).json({ error: 'كلمة المرور مطلوبة.' });
-  const cand = await scryptAsync(current, u0.salt, 64, SCRYPT_OPTS);
-  if (!crypto.timingSafeEqual(cand, Buffer.from(u0.hash, 'hex'))) return res.status(401).json({ error: tr(req, 'wrong_current_password'), code: 'wrong_current_password' });
+  if (!(await pwhash.check(current, u0))) return res.status(401).json({ error: tr(req, 'wrong_current_password'), code: 'wrong_current_password' });
   if (current === next) return res.status(400).json({ error: tr(req, 'same_password'), code: 'same_password' });
   const problem = passwordProblem(next, u0.username);
   if (problem) return res.status(400).json({ error: problem });
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = (await scryptAsync(next, salt, 64, SCRYPT_OPTS)).toString('hex');
+  const ph = await pwhash.make(next);
   const users = getUsers();
   const u = users.find(x => x.id === u0.id);
-  u.salt = salt; u.hash = hash;
+  pwhash.apply(u, ph);
   saveUsers(users);
   // إنهاء بقية الجلسات على الأجهزة الأخرى مع إبقاء الجلسة الحالية
   const keep = hashToken(parseCookies(req)[USER_COOKIE] || '');
@@ -1022,12 +1018,13 @@ app.delete('/api/admin/comments/:id', requireAdmin, (req, res) => {
 
 /* ---------- روابط المشاركة مع معاينة (Open Graph) ---------- */
 const escAttr = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const sri = require('./lib/sri')({ DATA_DIR, PUBLIC }); // SRI لسكربتات CDN (يعمل فقط بعد توليد data/sri.json)
 app.get('/', (req, res, next) => {
   const mid = typeof req.query.movie === 'string' ? req.query.movie : '';
   const sid = typeof req.query.short === 'string' ? req.query.short : '';
   if (!mid && !sid) return next();
   let html;
-  try { html = fs.readFileSync(path.join(PUBLIC, 'index.html'), 'utf8'); } catch { return next(); }
+  try { html = sri.apply(fs.readFileSync(path.join(PUBLIC, 'index.html'), 'utf8')); } catch { return next(); }
   const base = `${req.protocol}://${req.headers['x-forwarded-host'] || req.headers.host}`;
   let title = '', desc = '', image = '', url = '';
   if (mid) { const m = getMovies().find(x => x.id === mid); if (m) { title = m.title; desc = m.description || ''; image = m.posterUrl; url = `${base}/?movie=${encodeURIComponent(m.id)}`; } }
@@ -1054,12 +1051,21 @@ const v10ctx = {
   autoVerifyReceipt, normalizeReceipt, paymentStatusFor, DATA_DIR, UPLOADS, ROOT, PRIVATE_DIR, SHORTS_DIR, SUBS_DIR, unlinkQuiet
 };
 sec.routes({ app, requireAdmin, sameOrigin, sessions, hit, ROOT, DATA_DIR, ADMIN_FILE, mailer: require('./lib/mailer'), adminName: () => { const a = readJSON(ADMIN_FILE, null); return a && a.username; } });
+require('./lib/sec3')({ app, requireAdmin, ROOT, DATA_DIR, ADMIN_FILE, verifyPassword, readJSON, sec, sri, pwhash });
 require('./lib/siteui')({ app, requireAdmin, sameOrigin, readJSON, writeJSONAtomic, DATA_DIR });
+require('./lib/appbrand')({ app, requireAdmin, sameOrigin, readJSON, writeJSONAtomic, DATA_DIR, PUBLIC });
 require('./lib/v10')(v10ctx);
+require('./lib/lists')(v10ctx);
+require('./lib/music')(v10ctx);
 require('./lib/v11')({ ...v10ctx, startUserSession, authorOf, userMap, findTarget, USERNAME_RE, summaryFrom, shapeComment, upload: { fields: (...a) => (rq, rs, nx) => upload.fields(...a)(rq, rs, nx), single: (...a) => (rq, rs, nx) => upload.single(...a)(rq, rs, nx) }, sniffFile, cleanupMovieExtras });
 
-app.get('/admin',(req,res)=> getSession(req) ? res.sendFile(path.join(PUBLIC,'admin.html')) : res.redirect('/admin-login.html'));
-app.get('/admin.html',(req,res)=> getSession(req) ? res.sendFile(path.join(PUBLIC,'admin.html')) : res.redirect('/admin-login.html'));
+const sendPage = (res, f) => { let h; try { h = fs.readFileSync(path.join(PUBLIC, f), 'utf8'); } catch { return res.sendFile(path.join(PUBLIC, f)); } res.setHeader('Cache-Control', 'no-cache'); res.type('html').send(sri.apply(h)); };
+app.get('/admin',(req,res)=> getSession(req) ? sendPage(res,'admin.html') : res.redirect('/admin-login.html'));
+app.get('/admin.html',(req,res)=> getSession(req) ? sendPage(res,'admin.html') : res.redirect('/admin-login.html'));
+app.get(['/', '/index.html', '/admin-login.html'], (req, res, next) => { if (!sri.status().covered) return next(); sendPage(res, req.path === '/' ? 'index.html' : req.path.slice(1)); });
+app.get('/api/admin/security/sri', requireAdmin, (req, res) => res.json(sri.status()));
+let sriBusy = false;
+app.post('/api/admin/security/sri/refresh', sameOrigin, requireAdmin, async (req, res) => { if (sriBusy) return res.status(429).json({ error: 'قيد التنفيذ' }); sriBusy = true; try { const r = await sri.generate(); res.json({ ...r, ...sri.status() }); } catch (e) { res.status(500).json({ error: 'تعذّر التوليد' }); } finally { sriBusy = false; } });
 app.use(express.static(PUBLIC));
 app.use('/uploads', express.static(UPLOADS, { maxAge:'1h', fallthrough:false }));
 

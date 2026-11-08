@@ -13,6 +13,7 @@ if ! command -v node >/dev/null || [ "$(node -p 'process.versions.node.split("."
 fi
 [ "$FF" = y ] || [ "$FF" = Y ] && apt-get install -y ffmpeg
 cd "$APP" && npm install --omit=dev --no-audit --no-fund
+node tools/make-sri.mjs || true   # بصمات SRI لسكربتات CDN (آمن: عند الفشل لا يتغيّر شيء)
 mkdir -p data uploads
 [ -f data/admin.json ] || [ -f admin.json ] || node create-admin.js admin "$ADMINPW"
 if [ -n "$DOMAIN" ]; then PUB="https://$DOMAIN"; else PUB="http://$(curl -s ifconfig.me || echo localhost)"; fi

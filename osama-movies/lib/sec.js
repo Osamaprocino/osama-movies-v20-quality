@@ -11,12 +11,12 @@ let C = null; // سياق الخادم بعد init
 const S = {
   cfg: null, blocks: {}, ring: [], alerts: [], lastHash: '0'.repeat(64), seq: 0,
   ipScore: new Map(), ipReq: new Map(), denied: new Map(), uploads: new Map(), loginFails: new Map(), userFails: new Map(),
-  groups: new Map(), geo: new Map(), baseline: {}, started: Date.now(), globalReq: [], otpLast: 0
+  groups: new Map(), ustuff: new Map(), udist: new Map(), geo: new Map(), baseline: {}, started: Date.now(), globalReq: [], otpLast: 0
 };
 const SEV = { INFO: 0, LOW: 1, MEDIUM: 2, HIGH: 3, CRITICAL: 4 };
 const DEFAULT_CFG = {
   enabled: true, minSeverity: 'MEDIUM', groupSec: 300, blockThreshold: 10, blockMinutes: 15, rps: 300,
-  loginFail: 5, lockMinutes: 10, geo: true, allowIps: [], telegram: { on: false, chatId: '' }, email: { on: false, to: '' }
+  loginFail: 5, lockMinutes: 10, geo: true, digest: { on: false, hour: 9, last: '' }, allowIps: [], telegram: { on: false, chatId: '' }, email: { on: false, to: '' }
 };
 const now = () => Date.now();
 const isoLocal = t => { const d = new Date(t); return d.toISOString() + ' (UTC)'; };
@@ -94,7 +94,7 @@ const ADVICE = {
   sqli: 'لا إجراء عاجل — الطلب حُجب. راجع المصدر وفكّر بحجبه.', nosqli: 'الطلب حُجب. راجع المصدر.',
   xss: 'تأكد أن المحتوى يُهرَّب عند العرض (مفعّل في الموقع). راجع المصدر.', csrf: 'حُجب طلب كتابة من موقع آخر؛ لا إجراء إن تكرر فاحجب المصدر.', traversal: 'الطلب حُجب. تأكد أن المجلدات الخاصة غير مكشوفة.',
   ssrf: 'الطلب حُجب. لا تسمح بجلب روابط داخلية.', cmdi: 'الطلب حُجب. راجع المصدر فوراً.', proto_pollution: 'الطلب حُجب.',
-  scanner: 'أداة فحص آلي. الحجب التلقائي يعمل عند التكرار.', probe: 'محاولة الوصول لملفات حسّاسة. تأكد من الإعدادات.',
+  honeypot: 'طُلب مسار حسّاس لا يطلبه مستخدم عادي؛ حُجب المصدر مؤقتاً.', credential_stuffing: 'محاولات دخول لحسابات كثيرة من مصدر واحد؛ تحقق من حجبه وفعّل التنبيه.', distributed_bruteforce: 'هجوم موزّع على حساب واحد؛ نبّه صاحب الحساب لتغيير كلمة المرور.', admin_new_device: 'دخول أدمن من جهاز/عنوان جديد. إن لم تكن أنت فأنهِ الجلسات وغيّر كلمة المرور فوراً.', digest: 'ملخص دوري.', scanner: 'أداة فحص آلي. الحجب التلقائي يعمل عند التكرار.', probe: 'محاولة الوصول لملفات حسّاسة. تأكد من الإعدادات.',
   traffic_spike: 'تحقق من الحمل؛ فعّل حماية Cloudflare إن استمر.', repeated_denied: 'محاولات وصول مرفوضة متكررة؛ راجع المصدر.',
   session_hijack: 'أُنهيت الجلسة تلقائياً. غيّر كلمة المرور وراجع الأجهزة.', file_changed: 'تغيّر ملف حسّاس أثناء التشغيل! إن لم تكن أنت فاعزل الخادم وأعد النشر من نسخة نظيفة.',
   db_integrity: 'ملف بيانات تالف؛ استرجع من آخر نسخة احتياطية سليمة.', log_tamper: 'سجل الأمان يبدو معدَّلاً؛ تعامل مع الخادم كمخترَق محتمل.',
@@ -222,7 +222,7 @@ function inspect(req) {
   try { dec = decodeURIComponent(url); } catch { /* يبقى كما هو */ }
   const ua = String(req.headers['user-agent'] || '');
   if (SCANNER.test(ua)) found.push({ type: 'scanner', sev: 'MEDIUM', block: false, rule: 'scanner-ua', sample: ua });
-  if (PROBE.test(dec.split('?')[0])) found.push({ type: 'probe', sev: 'MEDIUM', block: false, rule: 'sensitive-path', sample: dec.split('?')[0] });
+  if (PROBE.test(dec.split('?')[0])) found.push({ type: 'honeypot', sev: 'HIGH', block: true, trap: true, rule: 'honeypot-path', sample: dec.split('?')[0] });
   const strs = [dec];
   const bodies = [req.body, req.query];
   for (const b of bodies) walk(b, (k, s) => {
@@ -246,8 +246,8 @@ function early(app) {
     res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
     const mode = process.env.SEC_CSP || 'enforce';
     if (mode !== 'off') {
-      const csp = ["default-src 'self'", "script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://accounts.google.com https://telegram.org https://www.youtube.com https://s.ytimg.com",
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com", "font-src 'self' https://fonts.gstatic.com data:",
+      const csp = ["default-src 'self'", "script-src 'self'" + (process.env.SEC_CSP_LEGACY_INLINE === '1' ? " 'unsafe-inline'" : '') + " https://unpkg.com https://cdn.jsdelivr.net https://accounts.google.com https://telegram.org https://www.youtube.com https://s.ytimg.com",
+        "script-src-attr 'none'", "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com", "font-src 'self' https://fonts.gstatic.com data:",
         "img-src 'self' data: blob: https:", "media-src 'self' blob: https:", "connect-src 'self' https:", "worker-src 'self' blob:",
         "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://accounts.google.com https://oauth.telegram.org",
         "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'self'", 'report-uri /api/csp-report'].join('; ');
@@ -261,6 +261,7 @@ function early(app) {
 function init(ctx) {
   C = ctx;
   S.cfg = { ...DEFAULT_CFG, ...readJ(F('security-config.json'), {}) };
+  S.cfg.digest = { ...DEFAULT_CFG.digest, ...(S.cfg.digest || {}) };
   S.cfg.telegram = { ...DEFAULT_CFG.telegram, ...(S.cfg.telegram || {}) }; S.cfg.email = { ...DEFAULT_CFG.email, ...(S.cfg.email || {}) };
   S.blocks = readJ(F('security-blocks.json'), {}); S.alerts = readJ(F('security-alerts.json'), []);
   loadChain();
@@ -296,6 +297,7 @@ function init(ctx) {
         record({ type: h.type, severity: h.sev, action: h.block ? 'blocked' : 'detected', ip, method: req.method, url: req.originalUrl, ua: req.headers['user-agent'], rule: h.rule, details: h.sample });
         if (h.block) block = true;
       }
+      if (hits.some(h => h.trap) && !isLoop(ip) && !(S.cfg.allowIps || []).includes(ip) && !blocked(ip)) { const m = blockIp(ip, 30, 'وصول لمسار فخ (honeypot)'); if (m) record({ type: 'ip_blocked', severity: 'HIGH', action: 'blocked', ip, rule: 'honeypot-block', details: `حجب ${m} دقيقة بعد طلب مسار حسّاس/فخ` }); }
       if (block) return res.status(403).json({ error: 'طلب مرفوض.' });
     }
     /* تدقيق وتتبّع حالات الرفض والرفع */
@@ -317,7 +319,7 @@ function init(ctx) {
     next();
   });
   /* مراقبة سلامة الملفات والبيانات */
-  baseline(); setInterval(integrityTick, 5 * 60000).unref();
+  baseline(); setInterval(integrityTick, 5 * 60000).unref(); setInterval(digestTick, 10 * 60000).unref();
   setInterval(() => { const t = now(); for (const m of [S.ipReq, S.denied, S.uploads, S.ipScore, S.loginFails]) for (const [k, v] of m) if ((v.reset || v.until || 0) < t) m.delete(k); }, 60000).unref();
 }
 function critFiles() {
@@ -377,8 +379,50 @@ function loginFail(req, username, how) {
 function loginOk(req, username) {
   const ip = req.secIp || req.ip; const f = S.loginFails.get(ip); S.userFails.delete(String(username || '').toLowerCase());
   const after = f && f.n >= S.cfg.loginFail;
-  S.loginFails.delete(ip);
+  S.loginFails.delete(ip); adminDevice(req, username);
   record({ type: after ? 'login_after_fails' : 'admin_login', severity: after ? 'CRITICAL' : 'INFO', action: 'success', ip, method: 'POST', url: '/api/auth/login', ua: req.headers['user-agent'], user: String(username).slice(0, 40), rule: after ? 'success-after-fails' : 'login', details: after ? `نجح الدخول بعد ${f.n} محاولات فاشلة من نفس المصدر` : '' });
+}
+
+function userLoginFail(req, ident) {
+  const ip = req.secIp || req.ip; if (!ip) return; const u = String(ident || '').slice(0, 60).toLowerCase();
+  let f = S.ustuff.get(ip); if (!f || f.reset < now()) f = { n: 0, names: new Set(), reset: now() + 10 * 60000, flagged: false }; f.n++; f.names.add(u); S.ustuff.set(ip, f);
+  const common = { ip, method: 'POST', url: '/api/user/login', ua: req.headers['user-agent'], user: u.slice(0, 40) };
+  record({ ...common, type: 'user_login_fail', severity: 'LOW', action: 'blocked', rule: 'bad-credentials', details: `فشل #${f.n}` });
+  if (!f.flagged && (f.names.size >= 6 || f.n >= 15)) { f.flagged = true; record({ ...common, user: '', type: 'credential_stuffing', severity: 'HIGH', action: 'detected', rule: 'many-accounts-one-ip', details: `${f.names.size} حساباً مختلفاً / ${f.n} محاولة خلال 10 دقائق` }); }
+  let d = S.udist.get(u); if (!d || d.reset < now()) d = { ips: new Set(), reset: now() + 15 * 60000, flagged: false }; d.ips.add(ip); S.udist.set(u, d);
+  if (!d.flagged && d.ips.size >= 8) { d.flagged = true; record({ ...common, ip: 'متعدد', type: 'distributed_bruteforce', severity: 'MEDIUM', action: 'detected', rule: 'many-ips-one-account', details: `${d.ips.size} عنوان مختلف يستهدف الحساب نفسه` }); }
+}
+function adminDevice(req, username) {
+  try {
+    const f = F('admin-known.json'); const k = readJ(f, { ips: [], uas: [] });
+    const ip = req.secIp || req.ip; const ua = crypto.createHash('sha256').update(String(req.headers['user-agent'] || '')).digest('hex').slice(0, 16);
+    const firstEver = !k.ips.length;
+    const newIp = !k.ips.includes(ip), newUa = !k.uas.includes(ua);
+    if (newIp) k.ips = [...k.ips, ip].slice(-20); if (newUa) k.uas = [...k.uas, ua].slice(-20);
+    if (newIp || newUa) writeJ(f, k);
+    if (!firstEver && newIp && newUa && !isLoop(ip)) record({ type: 'admin_new_device', severity: 'MEDIUM', action: 'success', ip, method: 'POST', url: '/api/auth/login', ua: req.headers['user-agent'], user: String(username).slice(0, 40), rule: 'new-ip-and-device', details: 'دخول ناجح من عنوان وجهاز لم يُستخدما من قبل' });
+  } catch { /* تجاهل */ }
+}
+function digestText() {
+  const day = now() - 864e5, by = {}, sv = {}, ips = {}; let blockedN = 0;
+  for (const e of S.ring) { if (Date.parse(e.ts) < day || e.type === 'admin_action') continue; by[e.type] = (by[e.type] || 0) + 1; sv[e.severity] = (sv[e.severity] || 0) + 1; if (e.ip) ips[e.ip] = (ips[e.ip] || 0) + 1; if (e.action === 'blocked') blockedN++; }
+  const top = Object.entries(ips).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([ip, n]) => `${ip} (${n})`).join('، ') || '—';
+  const types = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([t, n]) => `${t}: ${n}`).join('\n') || 'لا أحداث';
+  const d = S.alerts.filter(a => Date.parse(a.ts) > day && !a.ok && a.channel !== 'dashboard').length;
+  return `📊 الملخص الأمني اليومي — سينما أسامة\nحرجة: ${sv.CRITICAL || 0}  عالية: ${sv.HIGH || 0}  متوسطة: ${sv.MEDIUM || 0}\nمحجوبة: ${blockedN}   محجوبون الآن: ${Object.keys(S.blocks).filter(blocked).length}\nأكثر المصادر: ${top}\nتنبيهات فشل تسليمها: ${d}\n${types}\nالسجل: ${verifyChain().ok ? 'سليم ✅' : 'معدَّل ⚠️'}`;
+}
+async function sendDigest(force) {
+  const text = digestText(); const e = { id: crypto.randomBytes(4).toString('hex'), seq: 0, severity: 'INFO', type: 'digest', ts: new Date().toISOString() };
+  let sent = 0;
+  if (S.cfg.telegram.on && S.cfg.telegram.chatId) { sendWithRetry(e, 'telegram', text, 1); sent++; }
+  if (S.cfg.email.on && S.cfg.email.to) { sendWithRetry(e, 'email', text, 1); sent++; }
+  if (!sent) logDelivery(e, 'dashboard', true, 'لا قناة مفعّلة', 1);
+  return { sent, text };
+}
+function digestTick() {
+  try { if (!S.cfg.digest || !S.cfg.digest.on) return; const d = new Date(), key = d.toISOString().slice(0, 10);
+    if (d.getHours() !== (S.cfg.digest.hour | 0) || S.cfg.digest.last === key) return;
+    S.cfg.digest.last = key; writeJ(F('security-config.json'), S.cfg); sendDigest(); } catch { /* تجاهل */ }
 }
 
 /* ---------- TOTP ---------- */
@@ -440,6 +484,7 @@ function routes(ctx) {
     n.groupSec = clampN(b.groupSec, 10, 3600, n.groupSec); n.blockThreshold = clampN(b.blockThreshold, 3, 100, n.blockThreshold); n.blockMinutes = clampN(b.blockMinutes, 1, 1440, n.blockMinutes);
     n.rps = clampN(b.rps, 30, 5000, n.rps); n.loginFail = clampN(b.loginFail, 3, 30, n.loginFail); n.lockMinutes = clampN(b.lockMinutes, 1, 240, n.lockMinutes);
     if (typeof b.geo === 'boolean') n.geo = b.geo;
+    if (b.digest && typeof b.digest === 'object') n.digest = { ...n.digest, on: !!b.digest.on, hour: clampN(b.digest.hour, 0, 23, n.digest.hour) };
     if (Array.isArray(b.allowIps)) n.allowIps = b.allowIps.filter(x => typeof x === 'string' && /^[0-9a-fA-F:.]{3,45}$/.test(x)).slice(0, 30);
     if (b.telegram) { const c = String(b.telegram.chatId || '').trim(); if (c && !/^-?\d{3,20}$/.test(c)) return res.status(400).json({ error: 'معرّف المحادثة (Chat ID) يجب أن يكون رقماً.' }); n.telegram = { on: !!b.telegram.on && !!c, chatId: c }; }
     if (b.email) { const e = String(b.email.to || '').trim(); if (e && !/^[^\s@]{1,64}@[^\s@]{1,120}\.[^\s@]{2,}$/.test(e)) return res.status(400).json({ error: 'بريد غير صالح.' }); n.email = { on: !!b.email.on && !!e, to: e }; }
@@ -449,6 +494,7 @@ function routes(ctx) {
     const e = record({ type: 'test', severity: 'HIGH', action: 'detected', ip: req.secIp || req.ip, method: 'POST', url: '/api/admin/security/test-alert', ua: req.headers['user-agent'], rule: 'manual-test', details: 'تنبيه تجريبي من لوحة الأمان' });
     res.json({ success: true, id: e.id });
   });
+  app.post('/api/admin/security/digest', ...W, async (req, res) => { const r = await sendDigest(true); res.json({ success: true, sent: r.sent, preview: r.text }); });
   app.get('/api/admin/security/alerts', ...A, (req, res) => res.json({ items: S.alerts.slice(-100).reverse() }));
   app.get('/api/admin/security/blocks', ...A, (req, res) => res.json({ items: Object.entries(S.blocks).filter(([ip]) => blocked(ip)).map(([ip, b]) => ({ ip, ...b, geo: S.geo.get(ip) || null })) }));
   app.post('/api/admin/security/unblock', ...W, (req, res) => { const ip = String((req.body || {}).ip || ''); if (!S.blocks[ip]) return res.status(404).json({ error: 'غير محجوب.' }); delete S.blocks[ip]; S.ipScore.delete(ip); persistBlocks(); record({ type: 'admin_action', severity: 'INFO', action: 'success', ip: req.secIp || req.ip, rule: 'unblock', details: 'رفع حجب ' + ip }); res.json({ success: true }); });
@@ -496,4 +542,4 @@ function routes(ctx) {
 function server(srv) {
   try { srv.requestTimeout = 120000; srv.headersTimeout = 20000; srv.keepAliveTimeout = 10000; srv.maxConnections = Number(process.env.MAX_CONNECTIONS) || 2000; } catch { /* تجاهل */ }
 }
-module.exports = { early, init, routes, server, loginGate, loginFail, loginOk, checkOtp, record, _S: S };
+module.exports = { early, init, routes, server, loginGate, loginFail, loginOk, userLoginFail, checkOtp, record, _S: S };

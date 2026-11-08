@@ -1,0 +1,8 @@
+#section-appbrand button{padding:9px 20px;border-radius:12px;border:1px solid rgba(120,130,150,.35);background:rgba(255,255,255,.7);color:inherit;font:inherit;font-weight:600;cursor:pointer;transition:transform .12s,box-shadow .2s}
+#section-appbrand button:hover{box-shadow:0 6px 16px rgba(0,0,0,.12)}
+#section-appbrand button:active{transform:scale(.97)}
+#section-appbrand #abr-save{background:linear-gradient(135deg,#3478f6,#6a5cf6);color:#fff;border:0}
+#section-appbrand input[type=file]{max-width:100%}
+.dark #section-appbrand button{background:rgba(255,255,255,.08)}
+.dark #section-appbrand #abr-save{background:linear-gradient(135deg,#3478f6,#6a5cf6)}
+

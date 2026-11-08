@@ -1,0 +1,14 @@
+/* لوحة الأمان: «فحص الصحة الأمنية» (درجة + توصيات) */
+(function(){
+const E=s=>escapeHtml(String(s==null?'':s));
+function ensure(){const sec=document.querySelector('#section-secmon');if(!sec||sec.querySelector('#sm-health'))return;
+  const title=sec.querySelector('.page-title');title.insertAdjacentHTML('afterend','<section class="panel" id="sm-health" style="margin-bottom:12px"><div class="panel-title"><h2>الصحة الأمنية</h2><button class="secondary-admin" id="sm-health-btn" type="button">إعادة الفحص</button></div><div id="sm-health-body" class="hint">...</div></section>');
+  document.querySelector('#sm-health-btn').onclick=load;
+  document.querySelector('#sm-health').insertAdjacentHTML('beforeend','<div class="mini-form" style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button type="button" id="sm-sri-btn" style="padding:8px 16px;border-radius:10px;border:1px solid rgba(120,130,150,.35);cursor:pointer;font:inherit">تحديث بصمات SRI لسكربتات CDN</button><span id="sm-sri-msg" style="font-size:13px;opacity:.8"></span></div>');
+  document.querySelector('#sm-sri-btn').onclick=async function(){const m=document.querySelector('#sm-sri-msg');this.disabled=true;m.textContent='جارٍ الجلب والتحقق…';
+    try{const r=await api('/api/admin/security/sri/refresh',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});m.textContent='✅ '+r.covered+' من '+r.total+' سكربت موثَّق'+(r.saved<r.total?' — بعضها تعذّر (راجع اتصال السيرفر)':'');load()}catch(e){m.textContent='❌ '+e.message}this.disabled=false}}
+async function load(){try{const d=await api('/api/admin/security/health');const col=d.score>=90?'#16a34a':d.score>=75?'#65a30d':d.score>=55?'#d97706':'#dc2626';
+  document.querySelector('#sm-health-body').innerHTML=`<div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><div style="width:96px;height:96px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:26px;color:${col};background:conic-gradient(${col} ${d.score*3.6}deg,rgba(127,127,127,.2) 0)"><span style="width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:var(--bg,#fff)">${d.score}</span></div><div><b style="font-size:20px;color:${col}">التقدير ${E(d.grade)}</b><div class="hint">كل بند أخضر يرفع الدرجة. الأحمر فيه الإجراء المطلوب.</div></div></div><div style="margin-top:10px;display:grid;gap:6px">${d.checks.map(c=>`<div style="display:flex;gap:8px;font-size:13px"><span>${c.ok?'✅':'❌'}</span><span><b>${E(c.title)}</b>${c.ok?'':`<br><small>${E(c.fix)}</small>`}</span></div>`).join('')}</div>`}catch(e){document.querySelector('#sm-health-body').textContent=e.message}}
+function init(){const orig=window.showSection;if(!orig)return;window.showSection=function(n){const r=orig.apply(this,arguments);if(n==='secmon'){ensure();load()}return r}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();

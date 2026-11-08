@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<defs>
+<radialGradient id="bg" cx=".3" cy=".18" r="1.05"><stop offset="0" stop-color="#3b2a8c"/><stop offset=".5" stop-color="#1b1646"/><stop offset="1" stop-color="#0a0a1f"/></radialGradient>
+<linearGradient id="gold" x1="90" y1="60" x2="430" y2="460" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff3bd"/><stop offset=".45" stop-color="#f6bd45"/><stop offset="1" stop-color="#c2761c"/></linearGradient>
+<radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffb84d" stop-opacity=".55"/><stop offset="1" stop-color="#ffb84d" stop-opacity="0"/></radialGradient>
+<linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>
+</defs>
+<rect width="512" height="512" fill="url(#bg)"/>
+<circle cx="256" cy="262" r="190" fill="url(#glow)"/>
+<path d="M372 148A150 150 0 1 0 372 364" fill="none" stroke="url(#gold)" stroke-width="38" stroke-linecap="round"/>
+<path d="M232 190v136l112-68z" fill="url(#gold)" stroke="#fff3bd" stroke-width="5" stroke-linejoin="round"/>
+<g fill="url(#gold)"><circle cx="402" cy="256" r="9"/><circle cx="372" cy="102" r="6" opacity=".8"/><circle cx="372" cy="410" r="6" opacity=".8"/></g>
+<path d="M92 92l9 24 24 9-24 9-9 24-9-24-24-9 24-9z" fill="#fff3bd" opacity=".9"/>
+<rect width="512" height="512" fill="url(#sheen)"/>
+</svg>

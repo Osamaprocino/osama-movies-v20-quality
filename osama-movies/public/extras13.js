@@ -11,6 +11,7 @@ const ICONS={
  zap:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
  bookmark:'<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>',
  history:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>',
+ users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
  'layout-dashboard':'<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>'
 };
 nav.querySelectorAll(':scope>button>i[data-lucide],:scope>a>i[data-lucide]').forEach(i=>{
@@ -20,7 +21,7 @@ nav.querySelectorAll(':scope>button>i[data-lucide],:scope>a>i[data-lucide]').for
 });
 
 /* ---- الإعدادات: الموقع (من الإدارة) ثم تخصيص الزائر ---- */
-const DEF={enabled:true,style:'notch',mode:'per-tab',colors:['#3478f6','#f59e0b','#ec4899','#8b5cf6','#10b981'],single:'#3478f6',barLight:'#ffffff',barDark:'#141c28',anim:'jelly',halo:true,haptic:true,labels:true,allowUserCustom:true};
+const DEF={enabled:true,style:'notch',mode:'per-tab',colors:['#3478f6','#f59e0b','#ec4899','#8b5cf6','#10b981'],single:'#3478f6',barLight:'#ffffff',barDark:'#1a2434',anim:'jelly',halo:true,haptic:true,labels:true,allowUserCustom:true};
 const HEX=/^#[0-9a-f]{6}$/i;
 const rd=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch{return null}};
 const wr=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,JSON.stringify(v))}catch{}};

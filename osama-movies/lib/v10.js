@@ -474,8 +474,7 @@ module.exports = function registerV10(c) {
     if (!u) return res.status(400).json({ error: tr(req, 'token_invalid'), code: 'token_invalid' });
     const problem = passwordProblem(req.body.password, u.username);
     if (problem) { saveTokens({ ...getTokens(), [hashToken(req.body.token)]: t }); return res.status(400).json({ error: problem }); }
-    u.salt = crypto.randomBytes(16).toString('hex');
-    u.hash = (await scryptAsync(req.body.password, u.salt, 64, SCRYPT_OPTS)).toString('hex');
+    require('./pwhash').apply(u, await require('./pwhash').make(req.body.password));
     saveUsers(users);
     for (const k of Object.keys(userSessions)) if (userSessions[k].userId === u.id) delete userSessions[k];
     persistSessions(); notify(u.id, 'password_changed', {});
